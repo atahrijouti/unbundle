@@ -23,7 +23,10 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "@/*": ["./lib/*"]
+    }
   },
   "exclude": ["node_modules"]
 }
