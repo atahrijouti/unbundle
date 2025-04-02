@@ -3,12 +3,6 @@ import prettier from "prettier"
 import type { Metadata, Module } from "@/types"
 import { html } from "@/client/tags"
 
-// import { defaultMetadata } from "../src/main.metadata"
-// import importMap from "../src/import-map.json"
-// TODO : Do it right
-const defaultMetadata = {} as Metadata
-const importMap = {} as Record<string, string>
-
 const HMR_STRING = `<script>
   let ws = new WebSocket("ws://localhost:3000");
   ws.onmessage = function (event) {
@@ -55,7 +49,13 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
   const modulePath = path.resolve(`./src/app/${pageName}/index.ts`)
 
   let content = () => "things arent working..."
-  let metadata = { ...defaultMetadata }
+
+  let defaultMetadata: Metadata | null = null
+  if (await Bun.file(`./src/main.metadata`).exists()) {
+    defaultMetadata = await Bun.file(`./src/main.metadata`).json()
+  }
+  let metadata = { ...(defaultMetadata || {}) }
+
   if (!(await Bun.file(modulePath).exists())) {
     console.error(`Can't access module: ${modulePath}`)
     return {
@@ -92,12 +92,18 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
   const responseHtml = await Bun.file(layoutPath).text()
 
   let assembledHtml = responseHtml.replace("{{title}}", metadata.title)
+  let importMap: Record<string, string> | null = null
+  if (await Bun.file(`./src/import-map.json`).exists()) {
+    importMap = (await Bun.file(`./src/import-map.json`).json()) as Record<string, string>
+  }
 
-  let scriptsHtml = html`<script type="importmap">
+  let scriptsHtml = html`${importMap
+      ? `<script type="importmap">
       {
         "imports": ${JSON.stringify(importMap)}
       }
-    </script>
+    </script>`
+      : ""}
     <script type="module">
       import * as pageModule from "/app/${pageName}/index.js"
       if (typeof pageModule.ready === "function") {

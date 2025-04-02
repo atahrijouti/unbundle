@@ -3,10 +3,6 @@ import { transformSync } from "esbuild"
 import { mkdirSync, readdirSync, statSync, writeFileSync } from "fs"
 import path from "path"
 
-// import importMap from "../src/import-map.json"
-// TODO : Do it right
-const importMap = {} as Record<string, string>
-
 const SRC_FOLDER = "./src"
 const DIST_FOLDER = "./dist"
 const NODE_MODULES_FOLDER = "./node_modules"
@@ -66,14 +62,26 @@ export const transpileOrCopyFiles = async (files: string[]) => {
     }
   })
 
-  const nodeModulesPromises = Object.values(importMap)
-    .filter((target) => target.startsWith("./node_modules/"))
-    .map((target) => {
-      const relativeToNodeModules = target.replace("./node_modules/", "")
-      const src = path.join(NODE_MODULES_FOLDER, relativeToNodeModules)
-      const dest = path.join(`${DIST_FOLDER}/node_modules`, relativeToNodeModules)
-      copyKeepingStructure(target, src, dest)
-    })
+  let nodeModulesPromises: Promise<void>[] = []
+
+  if (await Bun.file(`${SRC_FOLDER}/import-map.json`).exists()) {
+    try {
+      const importMap = (await Bun.file(`${SRC_FOLDER}/import-map.json`).json()) as Record<
+        string,
+        string
+      >
+      nodeModulesPromises = Object.values(importMap)
+        .filter((target) => target.startsWith("./node_modules/"))
+        .map((target) => {
+          const relativeToNodeModules = target.replace("./node_modules/", "")
+          const src = path.join(NODE_MODULES_FOLDER, relativeToNodeModules)
+          const dest = path.join(`${DIST_FOLDER}/node_modules`, relativeToNodeModules)
+          return copyKeepingStructure(target, src, dest)
+        })
+    } catch (e) {
+      console.warn("Skipping import map, cound't process it", e)
+    }
+  }
 
   await Promise.all([...srcPromises, ...nodeModulesPromises])
 }
