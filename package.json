@@ -10,7 +10,11 @@
     "unbundle-build": "./lib/server/build.ts"
   },
   "exports": {
-    ".": "./lib/client/index.ts"
+    ".": "./lib/client/index.ts",
+    "./eslint": {
+      "import": "./eslint/unbundle.js",
+      "types": "./eslint/unbundle.d.ts"
+    }
   },
   "files": [
     "lib/",

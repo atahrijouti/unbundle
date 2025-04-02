@@ -29,7 +29,7 @@ const createRule = (check) => {
 
 const plugin = {
   meta: {
-    name: "my",
+    name: "unbundle",
   },
   configs: {},
   rules: {
@@ -66,11 +66,11 @@ const plugin = {
 Object.assign(plugin.configs, {
   recommended: {
     plugins: {
-      my: plugin,
+      unbundle: plugin,
     },
     rules: {
-      "my/require-extensions": "error",
-      "my/require-index": "error",
+      "unbundle/require-extensions": "error",
+      "unbundle/require-index": "error",
     },
   },
 })
