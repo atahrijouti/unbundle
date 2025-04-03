@@ -75,7 +75,14 @@ const server = Bun.serve({
       return new Response(Bun.file(`./dist${url.pathname}`))
     }
 
-    return new Response(Bun.file(`./public${url.pathname}`))
+    if (await Bun.file(`./public${url.pathname}`).exists()) {
+      return new Response(Bun.file(`./public${url.pathname}`))
+    }
+
+    return new Response("404 :-/", {
+      headers: { "Content-Type": "text/html" },
+      status: 404,
+    })
   },
   websocket: {
     open(ws) {
