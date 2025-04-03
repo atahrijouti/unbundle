@@ -1,9 +1,7 @@
 import { readdirSync, statSync } from "fs"
-import path, { join } from "path"
+import { join } from "path"
 
-const CWD = path.dirname(Bun.main)
-const MAIN_DIR = path.join(CWD, "..")
-const SRC_PATH = path.join(MAIN_DIR, "src")
+const SRC_PATH = join(process.cwd(), "src")
 
 export const getPages = () => {
   return readdirSync("./src/app").filter((name) => statSync(join("./src/app", name)).isDirectory())
