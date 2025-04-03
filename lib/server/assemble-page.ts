@@ -2,6 +2,7 @@ import path from "path"
 import prettier from "prettier"
 import type { Metadata, Module } from "@/types"
 import { html } from "@/client/tags"
+import { CONFIG } from "./config"
 
 const HMR_STRING = `<script>
   let ws = new WebSocket("ws://localhost:3000");
@@ -98,27 +99,45 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
   const responseHtml = await Bun.file(layoutPath).text()
 
   let assembledHtml = responseHtml.replace("{{title}}", metadata.title)
-  let importMap: Record<string, string> | null = null
-  if (await Bun.file(`./src/import-map.json`).exists()) {
-    importMap = (await Bun.file(`./src/import-map.json`).json()) as Record<string, string>
-  }
 
-  let scriptsHtml = html`${importMap
-      ? `<script type="importmap">
+  let scriptsHtml = ""
+
+  if (await Bun.file(`./src/import-map.json`).exists()) {
+    const importMap = (await Bun.file(`./src/import-map.json`).json()) as Record<string, string>
+
+    const renderImportmap =
+      CONFIG.BASE_URL === "/"
+        ? JSON.stringify(importMap)
+        : JSON.stringify(
+            Object.fromEntries(
+              Object.entries(importMap).map(([key, val]) => {
+                let newVal = val
+                if (val.startsWith("./")) {
+                  newVal = val.replace(/^\.\//, CONFIG.BASE_URL)
+                }
+                return [key, newVal]
+              }),
+            ),
+          )
+
+    scriptsHtml += html`<script type="importmap">
       {
-        "imports": ${JSON.stringify(importMap)}
+        "imports": ${renderImportmap}
       }
     </script>`
-      : ""}
-    <script type="module">
-      import * as pageModule from "/app/${pageName}/index.js"
+  }
+
+  scriptsHtml =
+    scriptsHtml +
+    html`<script type="module">
+      import * as pageModule from "${CONFIG.BASE_URL}app/${pageName}/index.js"
       if (typeof pageModule.ready === "function") {
         document.addEventListener("DOMContentLoaded", pageModule.ready)
       }
     </script>`
 
   if (process.env.NODE_ENV === "development") {
-    scriptsHtml = scriptsHtml.concat(HMR_STRING)
+    scriptsHtml = scriptsHtml + HMR_STRING
   }
 
   assembledHtml = assembledHtml.replace("<!-- {{scripts}} -->", scriptsHtml)
@@ -126,7 +145,7 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
   if (await Bun.file(path.resolve(`./src/app/${pageName}/styles.css`)).exists()) {
     assembledHtml = assembledHtml.replace(
       "<!-- {{styles}} -->",
-      `<link rel="stylesheet" href="/app/${pageName}/styles.css" />`,
+      `<link rel="stylesheet" href="${CONFIG.BASE_URL}app/${pageName}/styles.css" />`,
     )
   }
 
