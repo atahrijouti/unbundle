@@ -1,19 +1,16 @@
 #!/usr/bin/env bun
 
 import { $ } from "bun"
-import { readdirSync, statSync } from "fs"
 import { assemblePage } from "./assemble-page"
 import { listAllFiles, transpileOrCopyFiles } from "./transpile"
-import { join } from "path"
+import { getPages } from "./utils"
 
 const OUT_DIR = "./out"
 const SRC_FOLDER = "./src"
 const DIST_FOLDER = "./dist"
 const PUBLIC_FOLDER = "./public"
 
-const pages = readdirSync("./src/app").filter((name) =>
-  statSync(join("./src/app", name)).isDirectory(),
-)
+const pages = getPages()
 
 const build = async () => {
   console.log("Starting build process...")

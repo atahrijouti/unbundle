@@ -1,8 +1,13 @@
-import path from "path"
+import { readdirSync, statSync } from "fs"
+import path, { join } from "path"
 
 const CWD = path.dirname(Bun.main)
 const MAIN_DIR = path.join(CWD, "..")
 const SRC_PATH = path.join(MAIN_DIR, "src")
+
+export const getPages = () => {
+  return readdirSync("./src/app").filter((name) => statSync(join("./src/app", name)).isDirectory())
+}
 
 export const debounce = <T extends (...args: unknown[]) => void>(
   func: T,

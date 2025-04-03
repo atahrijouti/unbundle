@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
 
-import { readdirSync, watch } from "fs"
+import { watch } from "fs"
 
 import { $, type ServerWebSocket } from "bun"
 import { assemblePage } from "./assemble-page"
 import { listAllFiles, transpileOrCopyFiles } from "./transpile"
-import { clearImportCache, debounce } from "@/server/utils"
+import { clearImportCache, debounce, getPages } from "@/server/utils"
 
 process.env.NODE_ENV = "development"
 
@@ -60,7 +60,7 @@ const server = Bun.serve({
     const url = new URL(req.url)
     const pageName = url.pathname === "/" ? "home" : url.pathname.slice(1)
 
-    const pages = new Set(readdirSync("./src/app"))
+    const pages = new Set(getPages())
 
     if (pages.has(pageName)) {
       console.log(`Route :\t ${pageName} - ${Date.now()}`)
