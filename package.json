@@ -3,14 +3,18 @@
   "type": "module",
   "description": "I don't like bundling",
   "scripts": {
-    "compile": "tsc"
+    "build": "bun build lib/client/index.ts --outdir dist/client --outfile index.js",
+    "postinstall": "bun run build"
   },
   "bin": {
     "unbundle-serve": "./lib/server/index.ts",
     "unbundle-build": "./lib/server/build.ts"
   },
   "exports": {
-    ".": "./lib/client/index.ts",
+    ".": {
+      "import": "./dist/client/index.js",
+      "types": "./lib/client/index.ts"
+    },
     "./eslint": {
       "import": "./eslint/unbundle.js",
       "types": "./eslint/unbundle.d.ts"

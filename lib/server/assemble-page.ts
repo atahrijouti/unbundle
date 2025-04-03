@@ -54,7 +54,6 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
   if (await Bun.file(`./src/main.metadata`).exists()) {
     defaultMetadata = await Bun.file(`./src/main.metadata`).json()
   }
-  let metadata = { ...(defaultMetadata || {}) }
 
   if (!(await Bun.file(modulePath).exists())) {
     console.error(`Can't access module: ${modulePath}`)
@@ -72,6 +71,8 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
     }
   }
 
+  let metadata: Metadata | null = null
+
   try {
     const module: Module = await import(modulePath)
 
@@ -80,7 +81,10 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
     }
 
     content = module.content
-    metadata = { ...metadata, ...module.metadata }
+    metadata = { ...defaultMetadata, ...module.metadata } as Metadata & {
+      title: string
+      description: string
+    }
   } catch (err) {
     console.error(`Missing module essentials - ${modulePath}`, err)
     return {
@@ -88,6 +92,8 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
       html: `<title>${pageName} - 400</title><p>Missing module essentials - ${modulePath}</p><p>${err}</p>${HMR_STRING}`,
     }
   }
+
+  metadata = metadata as Metadata & { title: string }
 
   const responseHtml = await Bun.file(layoutPath).text()
 
