@@ -1,6 +1,7 @@
 import { $ } from "bun"
-import { transformSync } from "esbuild"
-import { mkdirSync, readdirSync, statSync, writeFileSync } from "fs"
+import esbuild from "esbuild"
+import prettier from "prettier"
+import { mkdirSync, readdirSync, statSync } from "fs"
 import path from "path"
 
 const SRC_FOLDER = "./src"
@@ -23,27 +24,6 @@ export const listAllFiles = (dir: string): string[] => {
   return files
 }
 
-export const transpileTypeScriptFile = async (file: string) => {
-  const fileRelativePath = path.relative(SRC_FOLDER, file)
-  const outputPath = path.join(DIST_FOLDER, fileRelativePath.replace(/\.ts$/, ".js"))
-
-  const code = await Bun.file(file).text()
-
-  try {
-    mkdirSync(path.dirname(outputPath), { recursive: true })
-
-    const transpiled = transformSync(code, {
-      loader: "ts",
-      target: "esnext",
-      format: "esm",
-    })
-
-    writeFileSync(outputPath, transpiled.code, "utf8")
-  } catch (e) {
-    console.log(`Error transpiling file ${file}:`, e)
-  }
-}
-
 export const copyKeepingStructure = async (file: string, src: string, dest: string) => {
   const fileRelativePath = path.relative(src, file)
   const outputPath = path.join(dest, fileRelativePath)
@@ -54,12 +34,35 @@ export const copyKeepingStructure = async (file: string, src: string, dest: stri
 }
 
 export const transpileOrCopyFiles = async (files: string[]) => {
-  const srcPromises = files.map((file) => {
-    if (file.endsWith(".ts")) {
-      return transpileTypeScriptFile(file)
-    } else {
-      copyKeepingStructure(file, SRC_FOLDER, DIST_FOLDER)
-    }
+  const esbuildPromise = esbuild.build({
+    logLevel: "debug",
+    entryPoints: files,
+    outdir: DIST_FOLDER,
+    outbase: SRC_FOLDER,
+    format: "esm",
+    target: "esnext",
+    platform: "browser",
+    write: false,
+    bundle: false,
+    minify: false,
+    loader: { ".html": "copy", ".json": "copy", ".css": "copy" },
+    plugins: [
+      {
+        name: "prettier-format",
+        setup(build) {
+          build.onEnd((result) => {
+            result.outputFiles?.forEach(async (file) => {
+              let text = file.text
+              if (file.path.endsWith(".js")) {
+                const config = (await prettier.resolveConfig(file.path)) || {}
+                text = await prettier.format(text, { parser: "babel", ...config })
+              }
+              Bun.write(file.path, text)
+            })
+          })
+        },
+      },
+    ],
   })
 
   let nodeModulesPromises: Promise<void>[] = []
@@ -83,5 +86,5 @@ export const transpileOrCopyFiles = async (files: string[]) => {
     }
   }
 
-  await Promise.all([...srcPromises, ...nodeModulesPromises])
+  await Promise.all([esbuildPromise, ...nodeModulesPromises])
 }
