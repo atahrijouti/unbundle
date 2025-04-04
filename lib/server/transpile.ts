@@ -50,15 +50,19 @@ export const transpileOrCopyFiles = async (files: string[]) => {
       {
         name: "prettier-format",
         setup(build) {
-          build.onEnd((result) => {
-            result.outputFiles?.forEach(async (file) => {
+          build.onEnd(async (result) => {
+            if (!result.outputFiles) {
+              return
+            }
+
+            for (const file of result.outputFiles) {
               let text = file.text
               if (file.path.endsWith(".js")) {
                 const config = (await prettier.resolveConfig(file.path)) || {}
                 text = await prettier.format(text, { parser: "babel", ...config })
               }
               Bun.write(file.path, text)
-            })
+            }
           })
         },
       },
