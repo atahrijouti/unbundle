@@ -127,12 +127,9 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
     </script>`
   }
 
-  scriptsHtml += html`<script type="module">
-    import * as pageModule from "${CONFIG.BASE_URL}app/${pageName}/index.js"
-    if (typeof pageModule.ready === "function") {
-      document.addEventListener("DOMContentLoaded", pageModule.ready)
-    }
-  </script>`
+  scriptsHtml += html`<script
+    type="module"
+    src="${CONFIG.BASE_URL}app/${pageName}/index.js"></script>`
 
   if (process.env.NODE_ENV === "development") {
     scriptsHtml += HMR_STRING
