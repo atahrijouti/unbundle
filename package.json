@@ -1,6 +1,6 @@
 {
   "name": "unbundle",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "description": "I don't like bundling",
   "scripts": {

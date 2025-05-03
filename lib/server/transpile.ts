@@ -48,6 +48,26 @@ export const transpileOrCopyFiles = async (files: string[]) => {
     loader: { ".html": "copy", ".json": "copy", ".css": "copy" },
     plugins: [
       {
+        name: "append-ready",
+        setup(build) {
+          build.onLoad({ filter: /src\/app\/[^/]+\/index\.ts$/ }, async ({ path }) => {
+            const source = await Bun.file(path).text()
+            if (source.includes("export const ready")) {
+              const modifiedSource = `${source}
+
+              document.addEventListener("DOMContentLoaded", ready);
+            `
+
+              return {
+                contents: modifiedSource,
+                loader: "ts",
+              }
+            }
+            return null
+          })
+        },
+      },
+      {
         name: "prettier-format",
         setup(build) {
           build.onEnd(async (result) => {
