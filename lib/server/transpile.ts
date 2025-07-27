@@ -50,7 +50,7 @@ export const transpileOrCopyFiles = async (files: string[]) => {
       {
         name: "append-ready",
         setup(build) {
-          build.onLoad({ filter: /src\/app\/[^/]+\/index\.ts$/ }, async ({ path }) => {
+          build.onLoad({ filter: /src[/\\]app[/\\][^/\\]+[/\\]index\.ts$/ }, async ({ path }) => {
             const source = await Bun.file(path).text()
             if (source.includes("export const ready")) {
               const modifiedSource = `${source}
