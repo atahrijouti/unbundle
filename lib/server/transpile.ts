@@ -30,7 +30,7 @@ export const copyKeepingStructure = async (file: string, src: string, dest: stri
 
   mkdirSync(path.dirname(outputPath), { recursive: true })
 
-  await $`cp ${file} ${outputPath}`
+  await $`cp -R ${file} ${outputPath}`
 }
 
 export const transpileOrCopyFiles = async (files: string[]) => {
