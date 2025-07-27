@@ -5,10 +5,10 @@ import { assemblePage } from "./assemble-page"
 import { listAllFiles, transpileOrCopyFiles } from "./transpile"
 import { getPages } from "./utils"
 
-const OUT_DIR = "./out"
-const SRC_FOLDER = "./src"
+const OUT_DIR = "out"
+const SRC_FOLDER = "src"
 const DIST_FOLDER = "dist"
-const PUBLIC_FOLDER = "./public"
+const PUBLIC_FOLDER = "public"
 
 const pages = getPages()
 
@@ -25,8 +25,8 @@ const build = async () => {
     process.exit(1)
   }
 
-  await $`cp -r ${PUBLIC_FOLDER}/* ${OUT_DIR}/`
-  await $`cp -r ${DIST_FOLDER}/* ${OUT_DIR}/`
+  await $`cp -R ${PUBLIC_FOLDER}/* ${OUT_DIR}/`
+  await $`cp -R ${DIST_FOLDER}/* ${OUT_DIR}/`
 
   for (const page of pages) {
     const { html } = await assemblePage(page)
