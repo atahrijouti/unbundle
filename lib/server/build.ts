@@ -7,7 +7,7 @@ import { getPages } from "./utils"
 
 const OUT_DIR = "./out"
 const SRC_FOLDER = "./src"
-const DIST_FOLDER = "./dist"
+const DIST_FOLDER = "dist"
 const PUBLIC_FOLDER = "./public"
 
 const pages = getPages()

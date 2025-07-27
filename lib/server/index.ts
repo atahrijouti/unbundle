@@ -10,7 +10,7 @@ import { clearImportCache, debounce, getPages } from "@/server/utils"
 process.env.NODE_ENV = "development"
 
 const SRC_FOLDER = "./src"
-const DIST_FOLDER = "./dist"
+const DIST_FOLDER = "dist"
 
 const sockets = new Set<ServerWebSocket<unknown>>()
 
