@@ -16,7 +16,7 @@ const sockets = new Set<ServerWebSocket<unknown>>()
 
 const remakeDist = async () => {
   await $`rm -rf ${DIST_FOLDER}`
-  await $`mkdir ${DIST_FOLDER}`
+  await $`mkdir -p ${DIST_FOLDER}`
 }
 
 const reloadPageMessage = (ws: ServerWebSocket<unknown>) => {
