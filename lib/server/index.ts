@@ -4,12 +4,12 @@ import { watch } from "fs"
 
 import { $, type ServerWebSocket } from "bun"
 import { assemblePage } from "./assemble-page"
-import { listAllFiles, transpileOrCopyFiles } from "./transpile"
+import { copyNodeModulesDependencies, listAllFiles, transpileOrCopyFiles } from "./transpile"
 import { clearImportCache, debounce, getPages } from "@/server/utils"
 
 process.env.NODE_ENV = "development"
 
-const SRC_FOLDER = "./src"
+const SRC_FOLDER = "src"
 const DIST_FOLDER = "dist"
 
 const sockets = new Set<ServerWebSocket<unknown>>()
@@ -34,6 +34,12 @@ const reloadDevEnvironment = debounce(() => {
 await remakeDist()
 
 try {
+  await copyNodeModulesDependencies()
+} catch (err) {
+  console.error("Error while copying node_module depencies:", err)
+}
+
+try {
   await transpileOrCopyFiles(listAllFiles(SRC_FOLDER))
 } catch (err) {
   console.error("Error during transpilation:", err)
@@ -41,7 +47,14 @@ try {
 
 const watcher = watch("./src", { recursive: true, persistent: true })
 watcher.on("change", async (_, filename) => {
-  // console.log(`File Watcher :\tevent [${event}], file[${SRC_FOLDER}/${filename}]`)
+  // console.log(`File Watcher :\tevent [${_}}], file[${SRC_FOLDER}/${filename}]`)
+  if (filename == `${SRC_FOLDER}/import-map.json`) {
+    try {
+      copyNodeModulesDependencies()
+    } catch (err) {
+      console.error("Error while copying node_module depencies:", err)
+    }
+  }
   try {
     await transpileOrCopyFiles([`${SRC_FOLDER}/${filename}`])
   } catch (err) {

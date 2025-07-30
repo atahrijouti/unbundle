@@ -2,7 +2,7 @@
 
 import { $ } from "bun"
 import { assemblePage } from "./assemble-page"
-import { listAllFiles, transpileOrCopyFiles } from "./transpile"
+import { copyNodeModulesDependencies, listAllFiles, transpileOrCopyFiles } from "./transpile"
 import { getPages } from "./utils"
 
 const OUT_DIR = "out"
@@ -17,6 +17,8 @@ const build = async () => {
 
   await $`rm -rf ${OUT_DIR}`
   await $`mkdir -p ${OUT_DIR}`
+
+  await copyNodeModulesDependencies()
 
   try {
     await transpileOrCopyFiles(listAllFiles(SRC_FOLDER))

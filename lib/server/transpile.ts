@@ -33,6 +33,31 @@ export const copyKeepingStructure = async (file: string, src: string, dest: stri
   await $`cp -R ${file} ${outputPath}`
 }
 
+export const copyNodeModulesDependencies = async () => {
+  let nodeModulesPromises: Promise<void>[] = []
+
+  if (await Bun.file(`${SRC_FOLDER}/import-map.json`).exists()) {
+    const importMap = (await Bun.file(`${SRC_FOLDER}/import-map.json`).json()) as Record<
+      string,
+      string
+    >
+    // console.log(
+    // `Delving into import-map.json ${JSON.stringify(importMap)}, and initiating node_modules copying`,
+    // )
+
+    nodeModulesPromises = Object.values(importMap)
+      .filter((target) => target.startsWith("./node_modules/"))
+      .map((target) => {
+        const relativeToNodeModules = target.replace("./node_modules/", "")
+        const src = path.join(NODE_MODULES_FOLDER, relativeToNodeModules)
+        const dest = path.join(`${DIST_FOLDER}/node_modules`, relativeToNodeModules)
+        return copyKeepingStructure(target, src, dest)
+      })
+  }
+
+  await Promise.all(nodeModulesPromises)
+}
+
 export const transpileOrCopyFiles = async (files: string[]) => {
   const esbuildPromise = esbuild.build({
     logLevel: "debug",
@@ -89,26 +114,5 @@ export const transpileOrCopyFiles = async (files: string[]) => {
     ],
   })
 
-  let nodeModulesPromises: Promise<void>[] = []
-
-  if (await Bun.file(`${SRC_FOLDER}/import-map.json`).exists()) {
-    try {
-      const importMap = (await Bun.file(`${SRC_FOLDER}/import-map.json`).json()) as Record<
-        string,
-        string
-      >
-      nodeModulesPromises = Object.values(importMap)
-        .filter((target) => target.startsWith("./node_modules/"))
-        .map((target) => {
-          const relativeToNodeModules = target.replace("./node_modules/", "")
-          const src = path.join(NODE_MODULES_FOLDER, relativeToNodeModules)
-          const dest = path.join(`${DIST_FOLDER}/node_modules`, relativeToNodeModules)
-          return copyKeepingStructure(target, src, dest)
-        })
-    } catch (e) {
-      console.warn("Skipping import map, cound't process it", e)
-    }
-  }
-
-  await Promise.all([esbuildPromise, ...nodeModulesPromises])
+  await Promise.all([esbuildPromise])
 }
