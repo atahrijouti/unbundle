@@ -18,7 +18,12 @@ const build = async () => {
   await $`rm -rf ${OUT_DIR}`
   await $`mkdir -p ${OUT_DIR}`
 
-  await copyNodeModulesDependencies()
+  try {
+    await copyNodeModulesDependencies()
+  } catch (err) {
+    console.error("Error while copying node_module depencies:", err)
+    process.exit(1)
+  }
 
   try {
     await transpileOrCopyFiles(listAllFiles(SRC_FOLDER))

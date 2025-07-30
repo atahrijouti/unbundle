@@ -50,7 +50,7 @@ watcher.on("change", async (_, filename) => {
   // console.log(`File Watcher :\tevent [${_}}], file[${SRC_FOLDER}/${filename}]`)
   if (filename == `${SRC_FOLDER}/import-map.json`) {
     try {
-      copyNodeModulesDependencies()
+      await copyNodeModulesDependencies()
     } catch (err) {
       console.error("Error while copying node_module depencies:", err)
     }
