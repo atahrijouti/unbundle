@@ -1,3 +1,6 @@
+export type Config = {
+  layout?: string
+}
 export type Metadata = {
   title: string
   description: string
@@ -8,6 +11,7 @@ export type Metadata = {
 }
 
 export type Module = {
+  config?: Config
   metadata: Metadata
   content: () => string
 }

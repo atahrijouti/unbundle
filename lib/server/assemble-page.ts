@@ -46,7 +46,7 @@ const assembleMetadata = (metadata: Metadata) => {
 }
 
 export const assemblePage = async (pageName: string): Promise<{ status: number; html: string }> => {
-  const layoutPath = path.resolve("./src/main.layout.html")
+  let layout = "main.layout.html"
   const modulePath = path.resolve(`./src/app/${pageName}/index.ts`)
 
   let content = () => "things arent working..."
@@ -64,14 +64,6 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
     }
   }
 
-  if (!(await Bun.file(layoutPath).exists())) {
-    console.error(`Can't access layout: ${layoutPath}`)
-    return {
-      status: 500,
-      html: `<title>${pageName} - 500</title><p>Can't access layout: ${layoutPath}</p>${HMR_STRING}`,
-    }
-  }
-
   let metadata: Metadata | null = null
 
   try {
@@ -86,6 +78,9 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
       title: string
       description: string
     }
+    if (module.config?.layout != null) {
+      layout = module.config.layout
+    }
   } catch (err) {
     console.error(`Missing module essentials - ${modulePath}`, err)
     return {
@@ -95,6 +90,16 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
   }
 
   metadata = metadata as Metadata & { title: string }
+
+  const layoutPath = `./src/${layout}`
+
+  if (!(await Bun.file(path.resolve(layoutPath)).exists())) {
+    console.error(`Can't access layout: ${layoutPath}`)
+    return {
+      status: 500,
+      html: `<title>${pageName} - 500</title><p>Can't access layout: ${layoutPath}</p>${HMR_STRING}`,
+    }
+  }
 
   const responseHtml = await Bun.file(layoutPath).text()
 
