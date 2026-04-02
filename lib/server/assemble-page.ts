@@ -1,4 +1,5 @@
-import path from "path"
+import path from "node:path"
+import fs from "node:fs"
 import prettier from "prettier"
 import type { Metadata, Module } from "@/types"
 import { html } from "@/client/tags"
@@ -52,11 +53,11 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
   let content = () => "things arent working..."
 
   let defaultMetadata: Metadata | null = null
-  if (await Bun.file(`./src/main.metadata`).exists()) {
-    defaultMetadata = await Bun.file(`./src/main.metadata`).json()
+  if (fs.existsSync(`./src/main.metadata`)) {
+    defaultMetadata = JSON.parse(await fs.promises.readFile(`./src/main.metadata`, "utf-8"))
   }
 
-  if (!(await Bun.file(modulePath).exists())) {
+  if (!fs.existsSync(modulePath)) {
     console.error(`Can't access module: ${modulePath}`)
     return {
       status: 500,
@@ -93,7 +94,7 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
 
   const layoutPath = `./src/${layout}`
 
-  if (!(await Bun.file(path.resolve(layoutPath)).exists())) {
+  if (!fs.existsSync(path.resolve(layoutPath))) {
     console.error(`Can't access layout: ${layoutPath}`)
     return {
       status: 500,
@@ -101,14 +102,17 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
     }
   }
 
-  const responseHtml = await Bun.file(layoutPath).text()
+  const responseHtml = await fs.promises.readFile(layoutPath, "utf-8")
 
   let assembledHtml = responseHtml.replace("{{title}}", metadata.title)
 
   let scriptsHtml = ""
 
-  if (await Bun.file(`./src/import-map.json`).exists()) {
-    const importMap = (await Bun.file(`./src/import-map.json`).json()) as Record<string, string>
+  const importMapPath = `./src/import-map.json`
+  if (fs.existsSync(importMapPath)) {
+    const importMap = JSON.parse(
+      await fs.promises.readFile(importMapPath, "utf-8"),
+    ) as Record<string, string>
 
     const renderImportmap =
       CONFIG.BASE_URL === "/"
@@ -142,7 +146,7 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
 
   assembledHtml = assembledHtml.replace("<!-- {{scripts}} -->", scriptsHtml)
 
-  if (await Bun.file(path.resolve(`./src/app/${pageName}/styles.css`)).exists()) {
+  if (fs.existsSync(path.resolve(`./src/app/${pageName}/styles.css`))) {
     assembledHtml = assembledHtml.replace(
       "<!-- {{styles}} -->",
       `<link rel="stylesheet" href="${CONFIG.BASE_URL}app/${pageName}/styles.css" />`,

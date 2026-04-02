@@ -1,4 +1,5 @@
-import path from "path"
+import path from "node:path"
+import fs from "node:fs"
 
 export let CONFIG = {
   BASE_URL: "/",
@@ -6,7 +7,7 @@ export let CONFIG = {
 
 let appConfig = {}
 
-if (await Bun.file("./unbundle.config.js").exists()) {
+if (fs.existsSync("./unbundle.config.js")) {
   appConfig = (await import(path.resolve("./unbundle.config.js"))).default
 }
 

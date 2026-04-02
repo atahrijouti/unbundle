@@ -1,8 +1,7 @@
-import { $ } from "bun"
 import esbuild from "esbuild"
 import prettier from "prettier"
-import { mkdirSync, readdirSync, statSync } from "fs"
-import path from "path"
+import fs from "node:fs"
+import path from "node:path"
 
 const SRC_FOLDER = "./src"
 const DIST_FOLDER = "./dist"
@@ -10,11 +9,11 @@ const NODE_MODULES_FOLDER = "./node_modules"
 
 export const listAllFiles = (dir: string): string[] => {
   const files: string[] = []
-  const entries = readdirSync(dir)
+  const entries = fs.readdirSync(dir)
 
   for (const entry of entries) {
     const fullPath = path.join(dir, entry)
-    if (statSync(fullPath).isDirectory()) {
+    if (fs.statSync(fullPath).isDirectory()) {
       files.push(...listAllFiles(fullPath))
     } else {
       files.push(fullPath)
@@ -28,22 +27,19 @@ export const copyKeepingStructure = async (file: string, src: string, dest: stri
   const fileRelativePath = path.relative(src, file)
   const outputPath = path.join(dest, fileRelativePath)
 
-  mkdirSync(path.dirname(outputPath), { recursive: true })
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true })
 
-  await $`cp -R ${file} ${outputPath}`
+  await fs.promises.cp(file, outputPath, { recursive: true })
 }
 
 export const copyNodeModulesDependencies = async () => {
   let nodeModulesPromises: Promise<void>[] = []
 
-  if (await Bun.file(`${SRC_FOLDER}/import-map.json`).exists()) {
-    const importMap = (await Bun.file(`${SRC_FOLDER}/import-map.json`).json()) as Record<
-      string,
-      string
-    >
-    // console.log(
-    // `Delving into import-map.json ${JSON.stringify(importMap)}, and initiating node_modules copying`,
-    // )
+  const importMapPath = `${SRC_FOLDER}/import-map.json`
+  if (fs.existsSync(importMapPath)) {
+    const importMap = JSON.parse(
+      await fs.promises.readFile(importMapPath, "utf-8"),
+    ) as Record<string, string>
 
     nodeModulesPromises = Object.values(importMap)
       .filter((target) => target.startsWith("./node_modules/"))
@@ -76,7 +72,7 @@ export const transpileOrCopyFiles = async (files: string[]) => {
         name: "append-ready",
         setup(build) {
           build.onLoad({ filter: /src[/\\]app[/\\][^/\\]+[/\\]index\.ts$/ }, async ({ path }) => {
-            const source = await Bun.file(path).text()
+            const source = await fs.promises.readFile(path, "utf-8")
             if (source.includes("export const ready")) {
               const modifiedSource = `${source}
 
@@ -106,7 +102,8 @@ export const transpileOrCopyFiles = async (files: string[]) => {
                 const config = (await prettier.resolveConfig(file.path)) || {}
                 text = await prettier.format(text, { parser: "babel", ...config })
               }
-              Bun.write(file.path, text)
+              await fs.promises.mkdir(path.dirname(file.path), { recursive: true })
+              await fs.promises.writeFile(file.path, text, "utf-8")
             }
           })
         },

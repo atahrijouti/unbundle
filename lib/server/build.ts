@@ -1,6 +1,6 @@
-#!/usr/bin/env bun
+#!/usr/bin/env -S node --experimental-strip-types
 
-import { $ } from "bun"
+import fs from "node:fs"
 import { assemblePage } from "./assemble-page"
 import { copyNodeModulesDependencies, listAllFiles, transpileOrCopyFiles } from "./transpile"
 import { getPages } from "./utils"
@@ -15,8 +15,8 @@ const pages = getPages()
 const build = async () => {
   console.log("Starting build process...")
 
-  await $`rm -rf ${OUT_DIR}`
-  await $`mkdir -p ${OUT_DIR}`
+  await fs.promises.rm(OUT_DIR, { recursive: true, force: true })
+  await fs.promises.mkdir(OUT_DIR, { recursive: true })
 
   try {
     await copyNodeModulesDependencies()
@@ -32,14 +32,14 @@ const build = async () => {
     process.exit(1)
   }
 
-  await $`cp -R ${PUBLIC_FOLDER}/* ${OUT_DIR}/`
-  await $`cp -R ${DIST_FOLDER}/* ${OUT_DIR}/`
+  await fs.promises.cp(PUBLIC_FOLDER, OUT_DIR, { recursive: true })
+  await fs.promises.cp(DIST_FOLDER, OUT_DIR, { recursive: true })
 
   for (const page of pages) {
     const { html } = await assemblePage(page)
     const fileName = page === "home" ? "index" : page
     const outputFile = `${OUT_DIR}/${fileName}.html`
-    await Bun.write(outputFile, html)
+    await fs.promises.writeFile(outputFile, html, "utf-8")
     console.log(`Generated: ${outputFile}`)
   }
 
