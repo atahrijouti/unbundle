@@ -1,5 +1,6 @@
 import path from "node:path"
 import fs from "node:fs"
+import { pathToFileURL } from "node:url"
 import prettier from "prettier"
 import type { Metadata, Module } from "../types"
 import { html } from "../client/tags"
@@ -48,7 +49,7 @@ const assembleMetadata = (metadata: Metadata) => {
 
 export const assemblePage = async (pageName: string): Promise<{ status: number; html: string }> => {
   let layout = "main.layout.html"
-  const modulePath = path.resolve(`./src/app/${pageName}/index.ts`)
+  const modulePath = path.resolve(`./dist/app/${pageName}/index.js`)
 
   let content = () => "things arent working..."
 
@@ -68,7 +69,7 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
   let metadata: Metadata | null = null
 
   try {
-    const module: Module = await import(modulePath)
+    const module: Module = await import(pathToFileURL(modulePath).href)
 
     if (module.metadata == null || module.content == null) {
       throw new Error("metadata or content unavailable")
