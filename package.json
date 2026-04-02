@@ -5,12 +5,12 @@
   "private": true,
   "description": "I don't like bundling",
   "scripts": {
-    "build": "esbuild lib/client/index.ts --bundle --outfile=dist/client/index.js --format=esm",
+    "build": "node build.js",
     "postinstall": "pnpm run build"
   },
   "bin": {
-    "unbundle-serve": "./lib/server/index.ts",
-    "unbundle-build": "./lib/server/build.ts"
+    "unbundle-serve": "./dist/server/index.js",
+    "unbundle-build": "./dist/server/build.js"
   },
   "exports": {
     ".": {
@@ -23,6 +23,7 @@
     }
   },
   "files": [
+    "dist/",
     "lib/",
     "LICENSE",
     "README.md"
