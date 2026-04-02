@@ -23,6 +23,7 @@
     }
   },
   "files": [
+    "build.js",
     "dist/",
     "lib/",
     "LICENSE",
