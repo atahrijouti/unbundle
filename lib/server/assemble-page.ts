@@ -1,8 +1,8 @@
 import path from "node:path"
 import fs from "node:fs"
 import prettier from "prettier"
-import type { Metadata, Module } from "@/types"
-import { html } from "@/client/tags"
+import type { Metadata, Module } from "../types"
+import { html } from "../client/tags"
 import { CONFIG } from "./config"
 
 const HMR_STRING = `<script>

@@ -22,10 +22,7 @@
     // Some stricter flags (disabled by default)
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false,
-    "paths": {
-      "@/*": ["./lib/*"]
-    }
+    "noPropertyAccessFromIndexSignature": false
   },
   "exclude": ["node_modules"]
 }
