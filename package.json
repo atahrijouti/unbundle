@@ -2,6 +2,7 @@
   "name": "unbundle",
   "version": "0.0.4",
   "type": "module",
+  "private": true,
   "description": "I don't like bundling",
   "scripts": {
     "build": "esbuild lib/client/index.ts --bundle --outfile=dist/client/index.js --format=esm",
