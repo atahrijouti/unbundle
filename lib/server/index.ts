@@ -64,7 +64,7 @@ try {
 
 const watcher = watch("./src", { recursive: true, persistent: true })
 watcher.on("change", async (_, filename) => {
-  if (!filename) return
+  if (!filename || typeof filename !== "string") return
   const filePath = path.join(SRC_FOLDER, filename)
 
   if (filename === "import-map.json") {
