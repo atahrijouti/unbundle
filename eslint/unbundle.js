@@ -11,7 +11,7 @@ const createRule = (check) => {
         const source = node.source
         if (!source) return
         const value = source.value.replace(/\?.*$/, "")
-        if (!value || !value.startsWith(".") || value.endsWith(".js")) return
+        if (!value || !value.startsWith(".") || value.endsWith(".ts")) return
 
         check(context, node, resolve(dirname(context.getFilename()), value))
       }
@@ -38,13 +38,13 @@ const plugin = {
         let fix
         if (!node.source.value.includes("?")) {
           fix = (fixer) => {
-            return fixer.replaceText(node.source, `'${node.source.value}.js'`)
+            return fixer.replaceText(node.source, `'${node.source.value}.ts'`)
           }
         }
 
         context.report({
           node,
-          message: "Relative imports and exports must end with .js",
+          message: "Relative imports and exports must end with .ts",
           fix,
         })
       }
@@ -53,9 +53,9 @@ const plugin = {
       if (existsSync(path) && lstatSync(path).isDirectory()) {
         context.report({
           node,
-          message: "Directory paths must end with index.js",
+          message: "Directory paths must end with index.ts",
           fix(fixer) {
-            return fixer.replaceText(node.source, `'${node.source.value}/index.js'`)
+            return fixer.replaceText(node.source, `'${node.source.value}/index.ts'`)
           },
         })
       }

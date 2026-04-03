@@ -49,7 +49,7 @@ const assembleMetadata = (metadata: Metadata) => {
 
 export const assemblePage = async (pageName: string): Promise<{ status: number; html: string }> => {
   let layout = "main.layout.html"
-  const modulePath = path.resolve(`./dist/app/${pageName}/index.js`)
+  const modulePath = path.resolve(`./src/app/${pageName}/index.ts`)
 
   let content = () => "things arent working..."
 

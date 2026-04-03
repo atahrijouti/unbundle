@@ -89,6 +89,24 @@ export const transpileOrCopyFiles = async (files: string[]) => {
         },
       },
       {
+        name: "rewrite-ts-imports",
+        setup(build) {
+          build.onEnd(async (result) => {
+            if (!result.outputFiles) return
+            for (const file of result.outputFiles) {
+              if (file.path.endsWith(".js")) {
+                file.contents = new TextEncoder().encode(
+                  file.text.replace(
+                    /(from\s+["'][.][^"']*?)\.ts(["'])/g,
+                    "$1.js$2",
+                  ),
+                )
+              }
+            }
+          })
+        },
+      },
+      {
         name: "prettier-format",
         setup(build) {
           build.onEnd(async (result) => {
