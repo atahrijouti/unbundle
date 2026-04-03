@@ -55,6 +55,17 @@ export const copyNodeModulesDependencies = async () => {
   await Promise.all(nodeModulesPromises)
 }
 
+export const prepareDist = async () => {
+  await copyNodeModulesDependencies()
+
+  const allFiles = listAllFiles(SRC_FOLDER)
+  const tsFiles = allFiles.filter((f) => path.extname(f) === ".ts")
+  const otherFiles = allFiles.filter((f) => path.extname(f) !== ".ts")
+
+  await Promise.all(otherFiles.map((f) => copyKeepingStructure(f, SRC_FOLDER, DIST_FOLDER)))
+  await transpileTsFiles(tsFiles)
+}
+
 export const transpileTsFiles = async (files: string[]) => {
   const tsFiles = files.filter((f) => {
     if (path.extname(f) === ".ts") return true

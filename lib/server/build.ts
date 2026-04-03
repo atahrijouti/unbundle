@@ -1,18 +1,11 @@
-#!/usr/bin/env -S node --experimental-strip-types
+#!/usr/bin/env node
 
 import fs from "node:fs"
-import path from "node:path"
 import { assemblePage } from "./assemble-page"
-import {
-  copyKeepingStructure,
-  copyNodeModulesDependencies,
-  listAllFiles,
-  transpileTsFiles,
-} from "./transpile"
+import { prepareDist } from "./transpile"
 import { getPages } from "./utils"
 
 const OUT_DIR = "out"
-const SRC_FOLDER = "src"
 const DIST_FOLDER = "dist"
 const PUBLIC_FOLDER = "public"
 
@@ -25,20 +18,9 @@ const build = async () => {
   await fs.promises.mkdir(OUT_DIR, { recursive: true })
 
   try {
-    await copyNodeModulesDependencies()
+    await prepareDist()
   } catch (err) {
-    console.error("Error while copying node_module depencies:", err)
-    process.exit(1)
-  }
-
-  try {
-    const allFiles = listAllFiles(SRC_FOLDER)
-    const tsFiles = allFiles.filter((f) => path.extname(f) === ".ts")
-    const otherFiles = allFiles.filter((f) => path.extname(f) !== ".ts")
-    await Promise.all(otherFiles.map((f) => copyKeepingStructure(f, SRC_FOLDER, DIST_FOLDER)))
-    await transpileTsFiles(tsFiles)
-  } catch (err) {
-    console.error("Error during transpilation:", err)
+    console.error("Error preparing dist:", err)
     process.exit(1)
   }
 

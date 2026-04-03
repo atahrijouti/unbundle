@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --experimental-strip-types
+#!/usr/bin/env node
 
 import { watch } from "node:fs"
 import fs from "node:fs"
@@ -10,7 +10,7 @@ import { assemblePage } from "./assemble-page"
 import {
   copyKeepingStructure,
   copyNodeModulesDependencies,
-  listAllFiles,
+  prepareDist,
   transpileTsFiles,
 } from "./transpile"
 import { debounce, getPages } from "./utils"
@@ -56,20 +56,9 @@ const reloadDevEnvironment = debounce(() => {
 await remakeDist()
 
 try {
-  await copyNodeModulesDependencies()
+  await prepareDist()
 } catch (err) {
-  console.error("Error while copying node_module depencies:", err)
-}
-
-const allFiles = listAllFiles(SRC_FOLDER)
-const tsFiles = allFiles.filter((f) => path.extname(f) === ".ts")
-const otherFiles = allFiles.filter((f) => path.extname(f) !== ".ts")
-
-try {
-  await Promise.all(otherFiles.map((f) => copyKeepingStructure(f, SRC_FOLDER, DIST_FOLDER)))
-  await transpileTsFiles(tsFiles)
-} catch (err) {
-  console.error("Error during transpilation:", err)
+  console.error("Error preparing dist:", err)
 }
 
 const watcher = watch("./src", { recursive: true, persistent: true })
