@@ -37,9 +37,10 @@ export const copyNodeModulesDependencies = async () => {
 
   const importMapPath = `${SRC_FOLDER}/import-map.json`
   if (fs.existsSync(importMapPath)) {
-    const importMap = JSON.parse(
-      await fs.promises.readFile(importMapPath, "utf-8"),
-    ) as Record<string, string>
+    const importMap = JSON.parse(await fs.promises.readFile(importMapPath, "utf-8")) as Record<
+      string,
+      string
+    >
 
     nodeModulesPromises = Object.values(importMap)
       .filter((target) => target.startsWith("./node_modules/"))
@@ -54,10 +55,16 @@ export const copyNodeModulesDependencies = async () => {
   await Promise.all(nodeModulesPromises)
 }
 
-export const transpileOrCopyFiles = async (files: string[]) => {
+export const transpileTsFiles = async (files: string[]) => {
+  const tsFiles = files.filter((f) => {
+    if (path.extname(f) === ".ts") return true
+    console.warn("transpileTsFiles: skipping non-.ts file:", f)
+    return false
+  })
+
   const esbuildPromise = esbuild.build({
     logLevel: "debug",
-    entryPoints: files,
+    entryPoints: tsFiles,
     outdir: DIST_FOLDER,
     outbase: SRC_FOLDER,
     format: "esm",
@@ -66,7 +73,6 @@ export const transpileOrCopyFiles = async (files: string[]) => {
     write: false,
     bundle: false,
     minify: false,
-    loader: { ".html": "copy", ".json": "copy", ".css": "copy" },
     plugins: [
       {
         name: "append-ready",
@@ -96,10 +102,7 @@ export const transpileOrCopyFiles = async (files: string[]) => {
             for (const file of result.outputFiles) {
               if (file.path.endsWith(".js")) {
                 file.contents = new TextEncoder().encode(
-                  file.text.replace(
-                    /(from\s+["'][.][^"']*?)\.ts(["'])/g,
-                    "$1.js$2",
-                  ),
+                  file.text.replace(/(from\s+["'][.][^"']*?)\.ts(["'])/g, "$1.js$2"),
                 )
               }
             }

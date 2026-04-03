@@ -7,7 +7,12 @@ import { createServer } from "node:http"
 import { WebSocketServer, type WebSocket } from "ws"
 
 import { assemblePage } from "./assemble-page"
-import { copyNodeModulesDependencies, listAllFiles, transpileOrCopyFiles } from "./transpile"
+import {
+  copyKeepingStructure,
+  copyNodeModulesDependencies,
+  listAllFiles,
+  transpileTsFiles,
+} from "./transpile"
 import { debounce, getPages } from "./utils"
 
 process.env.NODE_ENV = "development"
@@ -56,8 +61,13 @@ try {
   console.error("Error while copying node_module depencies:", err)
 }
 
+const allFiles = listAllFiles(SRC_FOLDER)
+const tsFiles = allFiles.filter((f) => path.extname(f) === ".ts")
+const otherFiles = allFiles.filter((f) => path.extname(f) !== ".ts")
+
 try {
-  await transpileOrCopyFiles(listAllFiles(SRC_FOLDER))
+  await Promise.all(otherFiles.map((f) => copyKeepingStructure(f, SRC_FOLDER, DIST_FOLDER)))
+  await transpileTsFiles(tsFiles)
 } catch (err) {
   console.error("Error during transpilation:", err)
 }
@@ -75,7 +85,11 @@ watcher.on("change", async (_, filename) => {
     }
   }
   try {
-    await transpileOrCopyFiles([filePath])
+    if (path.extname(filePath) === ".ts") {
+      await transpileTsFiles([filePath])
+    } else {
+      await copyKeepingStructure(filePath, SRC_FOLDER, DIST_FOLDER)
+    }
   } catch (err) {
     console.error("Error during transpilation:", err)
   }

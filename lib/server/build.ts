@@ -1,8 +1,14 @@
 #!/usr/bin/env -S node --experimental-strip-types
 
 import fs from "node:fs"
+import path from "node:path"
 import { assemblePage } from "./assemble-page"
-import { copyNodeModulesDependencies, listAllFiles, transpileOrCopyFiles } from "./transpile"
+import {
+  copyKeepingStructure,
+  copyNodeModulesDependencies,
+  listAllFiles,
+  transpileTsFiles,
+} from "./transpile"
 import { getPages } from "./utils"
 
 const OUT_DIR = "out"
@@ -26,7 +32,11 @@ const build = async () => {
   }
 
   try {
-    await transpileOrCopyFiles(listAllFiles(SRC_FOLDER))
+    const allFiles = listAllFiles(SRC_FOLDER)
+    const tsFiles = allFiles.filter((f) => path.extname(f) === ".ts")
+    const otherFiles = allFiles.filter((f) => path.extname(f) !== ".ts")
+    await Promise.all(otherFiles.map((f) => copyKeepingStructure(f, SRC_FOLDER, DIST_FOLDER)))
+    await transpileTsFiles(tsFiles)
   } catch (err) {
     console.error("Error during transpilation:", err)
     process.exit(1)
