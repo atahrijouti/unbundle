@@ -25,6 +25,7 @@
   "files": [
     "build.js",
     "dist/",
+    "eslint/",
     "lib/",
     "LICENSE",
     "README.md"
