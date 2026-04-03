@@ -54,8 +54,10 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
   let content = () => "things arent working..."
 
   let defaultMetadata: Metadata | null = null
-  if (fs.existsSync(`./src/main.metadata`)) {
-    defaultMetadata = JSON.parse(await fs.promises.readFile(`./src/main.metadata`, "utf-8"))
+  const defaultMetadataPath = path.resolve(`./src/main.metadata.ts`)
+  if (fs.existsSync(defaultMetadataPath)) {
+    const metadataModule = await import(pathToFileURL(defaultMetadataPath).href)
+    defaultMetadata = metadataModule.defaultMetadata ?? null
   }
 
   if (!fs.existsSync(modulePath)) {
