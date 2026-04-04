@@ -5,6 +5,8 @@ import { assemblePage } from "./assemble-page"
 import { prepareDist } from "./transpile"
 import { getPages } from "./utils"
 
+process.env.NODE_ENV ??= "production"
+
 const OUT_DIR = "out"
 const DIST_FOLDER = "dist"
 const PUBLIC_FOLDER = "public"
