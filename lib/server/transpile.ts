@@ -143,5 +143,5 @@ export const transpileTsFiles = async (files: string[]) => {
     ],
   })
 
-  await Promise.all([esbuildPromise])
+  await esbuildPromise
 }

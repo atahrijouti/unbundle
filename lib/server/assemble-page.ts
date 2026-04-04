@@ -113,9 +113,10 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
 
   const importMapPath = `./src/import-map.json`
   if (fs.existsSync(importMapPath)) {
-    const importMap = JSON.parse(
-      await fs.promises.readFile(importMapPath, "utf-8"),
-    ) as Record<string, string>
+    const importMap = JSON.parse(await fs.promises.readFile(importMapPath, "utf-8")) as Record<
+      string,
+      string
+    >
 
     const renderImportmap =
       CONFIG.BASE_URL === "/"
@@ -166,7 +167,7 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
     )
   }
 
-  if (process.env.NODE_ENV != "development") {
+  if (process.env.NODE_ENV !== "development") {
     const HTML_COMMENT_REGEX = /<!--\s*{{[^}]+}}\s*-->/g
     assembledHtml = assembledHtml.replace(HTML_COMMENT_REGEX, "")
   }

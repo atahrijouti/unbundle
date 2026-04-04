@@ -70,7 +70,7 @@ watcher.on("change", async (_, filename) => {
     try {
       await copyNodeModulesDependencies()
     } catch (err) {
-      console.error("Error while copying node_module depencies:", err)
+      console.error("Error while copying node_module dependencies:", err)
     }
   }
   try {
