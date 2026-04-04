@@ -23,13 +23,13 @@ export const listAllFiles = (dir: string): string[] => {
   return files
 }
 
-export const copyKeepingStructure = async (file: string, src: string, dest: string) => {
-  const fileRelativePath = path.relative(src, file)
-  const outputPath = path.join(dest, fileRelativePath)
+export const copyKeepingStructure = async (node: string, srcRoot: string, destRoot: string) => {
+  const fileRelativePath = path.relative(srcRoot, node)
+  const outputPath = path.join(destRoot, fileRelativePath)
 
   fs.mkdirSync(path.dirname(outputPath), { recursive: true })
 
-  await fs.promises.cp(file, outputPath, { recursive: true })
+  await fs.promises.cp(node, outputPath, { recursive: true })
 }
 
 export const copyNodeModulesDependencies = async () => {
@@ -45,10 +45,7 @@ export const copyNodeModulesDependencies = async () => {
     nodeModulesPromises = Object.values(importMap)
       .filter((target) => target.startsWith("./node_modules/"))
       .map((target) => {
-        const relativeToNodeModules = target.replace("./node_modules/", "")
-        const src = path.join(NODE_MODULES_FOLDER, relativeToNodeModules)
-        const dest = path.join(`${DIST_FOLDER}/node_modules`, relativeToNodeModules)
-        return copyKeepingStructure(target, src, dest)
+        return copyKeepingStructure(target, NODE_MODULES_FOLDER, `${DIST_FOLDER}/node_modules`)
       })
   }
 
