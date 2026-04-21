@@ -2,40 +2,13 @@ import esbuild from "esbuild"
 import prettier from "prettier"
 import fs from "node:fs"
 import path from "node:path"
-
-const SRC_FOLDER = "./src"
-const DIST_FOLDER = "./dist"
-const NODE_MODULES_FOLDER = "./node_modules"
-
-export const listAllFiles = (dir: string): string[] => {
-  const files: string[] = []
-  const entries = fs.readdirSync(dir)
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry)
-    if (fs.statSync(fullPath).isDirectory()) {
-      files.push(...listAllFiles(fullPath))
-    } else {
-      files.push(fullPath)
-    }
-  }
-
-  return files
-}
-
-export const copyKeepingStructure = async (node: string, srcRoot: string, destRoot: string) => {
-  const fileRelativePath = path.relative(srcRoot, node)
-  const outputPath = path.join(destRoot, fileRelativePath)
-
-  fs.mkdirSync(path.dirname(outputPath), { recursive: true })
-
-  await fs.promises.cp(node, outputPath, { recursive: true })
-}
+import { copyKeepingStructure, listAllFiles } from "./utils/fs"
+import { CONFIG } from "./config"
 
 export const copyNodeModulesDependencies = async () => {
   let nodeModulesPromises: Promise<void>[] = []
 
-  const importMapPath = `${SRC_FOLDER}/import-map.json`
+  const importMapPath = `${CONFIG.SRC_FOLDER}/import-map.json`
   if (fs.existsSync(importMapPath)) {
     const importMap = JSON.parse(await fs.promises.readFile(importMapPath, "utf-8")) as Record<
       string,
@@ -45,7 +18,11 @@ export const copyNodeModulesDependencies = async () => {
     nodeModulesPromises = Object.values(importMap)
       .filter((target) => target.startsWith("./node_modules/"))
       .map((target) => {
-        return copyKeepingStructure(target, NODE_MODULES_FOLDER, `${DIST_FOLDER}/node_modules`)
+        return copyKeepingStructure(
+          target,
+          CONFIG.NODE_MODULES_FOLDER,
+          `${CONFIG.DIST_FOLDER}/node_modules`,
+        )
       })
   }
 
@@ -55,11 +32,13 @@ export const copyNodeModulesDependencies = async () => {
 export const prepareDist = async () => {
   await copyNodeModulesDependencies()
 
-  const allFiles = listAllFiles(SRC_FOLDER)
+  const allFiles = listAllFiles(CONFIG.SRC_FOLDER)
   const tsFiles = allFiles.filter((f) => path.extname(f) === ".ts")
   const otherFiles = allFiles.filter((f) => path.extname(f) !== ".ts")
 
-  await Promise.all(otherFiles.map((f) => copyKeepingStructure(f, SRC_FOLDER, DIST_FOLDER)))
+  await Promise.all(
+    otherFiles.map((f) => copyKeepingStructure(f, CONFIG.SRC_FOLDER, CONFIG.DIST_FOLDER)),
+  )
   await transpileTsFiles(tsFiles)
 }
 
@@ -73,8 +52,8 @@ export const transpileTsFiles = async (files: string[]) => {
   const esbuildPromise = esbuild.build({
     logLevel: "debug",
     entryPoints: tsFiles,
-    outdir: DIST_FOLDER,
-    outbase: SRC_FOLDER,
+    outdir: CONFIG.DIST_FOLDER,
+    outbase: CONFIG.SRC_FOLDER,
     format: "esm",
     target: "esnext",
     platform: "browser",

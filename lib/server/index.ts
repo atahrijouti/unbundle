@@ -1,47 +1,20 @@
 #!/usr/bin/env node
 
-import { watch } from "node:fs"
 import fs from "node:fs"
 import path from "node:path"
 import { createServer } from "node:http"
 import { WebSocketServer, type WebSocket } from "ws"
 
 import { assemblePage } from "./assemble-page"
-import {
-  copyKeepingStructure,
-  copyNodeModulesDependencies,
-  prepareDist,
-  transpileTsFiles,
-} from "./transpile"
-import { debounce, getPages } from "./utils"
+import { copyNodeModulesDependencies, prepareDist, transpileTsFiles } from "./transpile"
+import { getPages, SERVED_MIME_TYPES } from "./utils/lib"
+import { debounce } from "./utils/functions"
+import { copyKeepingStructure, remakeDir } from "./utils/fs"
+import { CONFIG } from "./config"
 
-process.env.NODE_ENV = "development"
-
-const SRC_FOLDER = "src"
-const DIST_FOLDER = "dist"
-
-const MIME_TYPES: Record<string, string> = {
-  ".html": "text/html",
-  ".js": "text/javascript",
-  ".css": "text/css",
-  ".json": "application/json",
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".gif": "image/gif",
-  ".svg": "image/svg+xml",
-  ".ico": "image/x-icon",
-  ".woff": "font/woff",
-  ".woff2": "font/woff2",
-  ".webp": "image/webp",
-}
+process.env.NODE_ENV ??= "development"
 
 const sockets = new Set<WebSocket>()
-
-const remakeDist = async () => {
-  await fs.promises.rm(DIST_FOLDER, { recursive: true, force: true })
-  await fs.promises.mkdir(DIST_FOLDER, { recursive: true })
-}
 
 const reloadPageMessage = (ws: WebSocket) => {
   ws.send("reload")
@@ -53,7 +26,7 @@ const reloadDevEnvironment = debounce(() => {
   })
 }, 750)
 
-await remakeDist()
+await remakeDir(CONFIG.DIST_FOLDER)
 
 try {
   await prepareDist()
@@ -61,10 +34,10 @@ try {
   console.error("Error preparing dist:", err)
 }
 
-const watcher = watch("./src", { recursive: true, persistent: true })
+const watcher = fs.watch("./src", { recursive: true, persistent: true })
 watcher.on("change", async (_, filename) => {
   if (!filename || typeof filename !== "string") return
-  const filePath = path.join(SRC_FOLDER, filename)
+  const filePath = path.join(CONFIG.SRC_FOLDER, filename)
 
   if (filename === "import-map.json") {
     try {
@@ -77,7 +50,7 @@ watcher.on("change", async (_, filename) => {
     if (path.extname(filePath) === ".ts") {
       await transpileTsFiles([filePath])
     } else {
-      await copyKeepingStructure(filePath, SRC_FOLDER, DIST_FOLDER)
+      await copyKeepingStructure(filePath, CONFIG.SRC_FOLDER, CONFIG.DIST_FOLDER)
     }
   } catch (err) {
     console.error("Error during transpilation:", err)
@@ -90,7 +63,7 @@ const serveStaticFile = async (
 ): Promise<{ body: Buffer; contentType: string } | null> => {
   if (!fs.existsSync(filePath)) return null
   const ext = path.extname(filePath).toLowerCase()
-  const contentType = MIME_TYPES[ext] ?? "application/octet-stream"
+  const contentType = SERVED_MIME_TYPES[ext] ?? "application/octet-stream"
   const body = await fs.promises.readFile(filePath)
   return { body, contentType }
 }
