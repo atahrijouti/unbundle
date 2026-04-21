@@ -14,6 +14,8 @@ import { CONFIG } from "./config"
 
 process.env.NODE_ENV ??= "development"
 
+const IGNORED_EXTENSIONS = new Set([".bck"])
+
 const sockets = new Set<WebSocket>()
 
 const reloadPageMessage = (ws: WebSocket) => {
@@ -37,6 +39,7 @@ try {
 const watcher = fs.watch(CONFIG.SRC_FOLDER, { recursive: true, persistent: true })
 watcher.on("change", async (_, filename) => {
   if (!filename || typeof filename !== "string") return
+  if (IGNORED_EXTENSIONS.has(path.extname(filename))) return
   const filePath = path.join(CONFIG.SRC_FOLDER, filename)
 
   if (filename === "import-map.json") {
