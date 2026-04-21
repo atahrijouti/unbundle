@@ -34,7 +34,7 @@ try {
   console.error("Error preparing dist:", err)
 }
 
-const watcher = fs.watch("./src", { recursive: true, persistent: true })
+const watcher = fs.watch(CONFIG.SRC_FOLDER, { recursive: true, persistent: true })
 watcher.on("change", async (_, filename) => {
   if (!filename || typeof filename !== "string") return
   const filePath = path.join(CONFIG.SRC_FOLDER, filename)

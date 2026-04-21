@@ -1,5 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
+import { CONFIG } from "../config"
 
 export const SERVED_MIME_TYPES: Record<string, string> = {
   ".html": "text/html",
@@ -19,6 +20,6 @@ export const SERVED_MIME_TYPES: Record<string, string> = {
 
 export const getPages = () => {
   return fs
-    .readdirSync("./src/app")
-    .filter((name) => fs.statSync(path.join("./src/app", name)).isDirectory())
+    .readdirSync(path.join(CONFIG.SRC_FOLDER, "app"))
+    .filter((name) => fs.statSync(path.join(CONFIG.SRC_FOLDER, "app", name)).isDirectory())
 }
