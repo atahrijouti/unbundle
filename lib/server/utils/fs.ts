@@ -8,12 +8,13 @@ export const remakeDir = async (dir: string) => {
 }
 
 export const copyKeepingStructure = async (node: string, srcRoot: string, destRoot: string) => {
+  if (!fs.existsSync(node)) return
   const fileRelativePath = path.relative(srcRoot, node)
   const outputPath = path.join(destRoot, fileRelativePath)
 
   fs.mkdirSync(path.dirname(outputPath), { recursive: true })
 
-  await fs.promises.cp(node, outputPath, { recursive: true })
+  await fs.promises.copyFile(node, outputPath)
 }
 
 export const listAllFiles = (dir: string): string[] => {
