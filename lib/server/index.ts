@@ -36,29 +36,44 @@ try {
   console.error("Error preparing dist:", err)
 }
 
-const watcher = fs.watch(CONFIG.SRC_FOLDER, { recursive: true, persistent: true })
-watcher.on("change", async (_, filename) => {
-  if (!filename || typeof filename !== "string") return
-  if (IGNORED_EXTENSIONS.has(path.extname(filename))) return
-  const filePath = path.join(CONFIG.SRC_FOLDER, filename)
+const pendingChanges = new Set<string>()
+let pendingNodeModulesCopy = false
 
-  if (filename === "import-map.json") {
-    try {
-      await copyNodeModulesDependencies()
-    } catch (err) {
-      console.error("Error while copying node_module dependencies:", err)
-    }
-  }
+const flushChanges = debounce(async () => {
+  const files = [...pendingChanges]
+  pendingChanges.clear()
+
   try {
-    if (path.extname(filePath) === ".ts") {
-      await transpileTsFiles([filePath])
-    } else {
-      await copyKeepingStructure(filePath, CONFIG.SRC_FOLDER, CONFIG.DIST_FOLDER)
+    if (pendingNodeModulesCopy) {
+      pendingNodeModulesCopy = false
+      await copyNodeModulesDependencies()
     }
+
+    const tsFiles = files.filter((f) => path.extname(f) === ".ts")
+    const otherFiles = files.filter((f) => path.extname(f) !== ".ts")
+
+    await Promise.all([
+      tsFiles.length > 0 ? transpileTsFiles(tsFiles) : Promise.resolve(),
+      ...otherFiles.map((f) => copyKeepingStructure(f, CONFIG.SRC_FOLDER, CONFIG.DIST_FOLDER)),
+    ])
   } catch (err) {
     console.error("Error during transpilation:", err)
   }
+
   reloadDevEnvironment()
+}, 50)
+
+const watcher = fs.watch(CONFIG.SRC_FOLDER, { recursive: true, persistent: true })
+watcher.on("change", (_, filename) => {
+  if (!filename || typeof filename !== "string") return
+  if (IGNORED_EXTENSIONS.has(path.extname(filename))) return
+
+  if (filename === "import-map.json") {
+    pendingNodeModulesCopy = true
+  }
+
+  pendingChanges.add(path.join(CONFIG.SRC_FOLDER, filename))
+  flushChanges()
 })
 
 const serveStaticFile = async (
