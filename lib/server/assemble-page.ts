@@ -53,10 +53,12 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
 
   let content = () => "things arent working..."
 
+  const cacheBuster = process.env.NODE_ENV === "development" ? `?t=${Date.now()}` : ""
+
   let defaultMetadata: Metadata | null = null
   const defaultMetadataPath = path.resolve(`./src/main.metadata.ts`)
   if (fs.existsSync(defaultMetadataPath)) {
-    const metadataModule = await import(pathToFileURL(defaultMetadataPath).href)
+    const metadataModule = await import(pathToFileURL(defaultMetadataPath).href + cacheBuster)
     defaultMetadata = metadataModule.defaultMetadata ?? null
   }
 
@@ -71,7 +73,7 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
   let metadata: Metadata | null = null
 
   try {
-    const module: Module = await import(pathToFileURL(modulePath).href)
+    const module: Module = await import(pathToFileURL(modulePath).href + cacheBuster)
 
     if (module.metadata == null || module.content == null) {
       throw new Error("metadata or content unavailable")
