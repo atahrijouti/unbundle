@@ -4,6 +4,7 @@ import fs from "node:fs"
 import path from "node:path"
 import { copyKeepingStructure, listAllFiles } from "./utils/fs"
 import { CONFIG } from "./config"
+import { logTag } from "./utils/functions"
 
 export const copyNodeModulesDependencies = async () => {
   let nodeModulesPromises: Promise<void>[] = []
@@ -49,8 +50,12 @@ export const transpileTsFiles = async (files: string[]) => {
     return false
   })
 
+  for (const f of tsFiles) {
+    logTag("Transpile", path.relative(CONFIG.SRC_FOLDER, f))
+  }
+
   const esbuildPromise = esbuild.build({
-    logLevel: "debug",
+    logLevel: "warning",
     entryPoints: tsFiles,
     outdir: CONFIG.DIST_FOLDER,
     outbase: CONFIG.SRC_FOLDER,

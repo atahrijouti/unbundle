@@ -9,3 +9,7 @@ export const debounce = <T extends (...args: unknown[]) => void>(
     timer = setTimeout(() => func(...args), delay)
   }
 }
+
+export const logTag = (tag: string, msg: string) => {
+  console.log(`${tag.padEnd(10)} ${msg}`)
+}

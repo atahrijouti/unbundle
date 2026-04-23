@@ -68,11 +68,14 @@ watcher.on("change", (_, filename) => {
   if (!filename || typeof filename !== "string") return
   if (IGNORED_EXTENSIONS.has(path.extname(filename))) return
 
+  const fullPath = path.join(CONFIG.SRC_FOLDER, filename)
+  if (!fs.existsSync(fullPath) || !fs.statSync(fullPath).isFile()) return
+
   if (filename === "import-map.json") {
     pendingNodeModulesCopy = true
   }
 
-  pendingChanges.add(path.join(CONFIG.SRC_FOLDER, filename))
+  pendingChanges.add(fullPath)
   flushChanges()
 })
 

@@ -1,6 +1,7 @@
 import fsPromises from "node:fs/promises"
 import fs from "node:fs"
 import path from "node:path"
+import { logTag } from "./functions"
 
 export const remakeDir = async (dir: string) => {
   await fsPromises.rm(dir, { recursive: true, force: true })
@@ -12,9 +13,10 @@ export const copyKeepingStructure = async (node: string, srcRoot: string, destRo
   const fileRelativePath = path.relative(srcRoot, node)
   const outputPath = path.join(destRoot, fileRelativePath)
 
+  logTag("Copy", fileRelativePath)
   fs.mkdirSync(path.dirname(outputPath), { recursive: true })
 
-  await fs.promises.copyFile(node, outputPath)
+  await fs.promises.cp(node, outputPath, { recursive: true })
 }
 
 export const listAllFiles = (dir: string): string[] => {
