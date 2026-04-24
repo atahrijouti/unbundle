@@ -82,10 +82,23 @@ watcher.on("change", (_, filename) => {
 const serveStaticFile = async (
   filePath: string,
 ): Promise<{ body: Buffer; contentType: string } | null> => {
-  if (!fs.existsSync(filePath)) return null
-  const ext = path.extname(filePath).toLowerCase()
+  let resolvedPath = filePath
+  try {
+    const stat = fs.statSync(filePath)
+    if (stat.isDirectory()) {
+      const dirIndexStat = fs.statSync(path.join(filePath, "index.html"))
+      if (!dirIndexStat.isFile()) {
+        return null
+      }
+      resolvedPath = path.join(filePath, "index.html")
+    }
+  } catch {
+    return null
+  }
+
+  const ext = path.extname(resolvedPath).toLowerCase()
   const contentType = SERVED_MIME_TYPES[ext] ?? "application/octet-stream"
-  const body = await fs.promises.readFile(filePath)
+  const body = await fs.promises.readFile(resolvedPath)
   return { body, contentType }
 }
 
