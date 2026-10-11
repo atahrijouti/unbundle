@@ -51,7 +51,7 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
   let layout = "main.layout.html"
   const modulePath = path.resolve(`./src/app/${pageName}/index.ts`)
 
-  let content = () => "things arent working..."
+  let content: Module["content"]
 
   const cacheBuster = process.env.NODE_ENV === "development" ? `?t=${Date.now()}` : ""
 
@@ -70,7 +70,7 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
     }
   }
 
-  let metadata: Metadata | null = null
+  let metadata: Metadata
 
   try {
     const module: Module = await import(pathToFileURL(modulePath).href + cacheBuster)

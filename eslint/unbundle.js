@@ -13,7 +13,7 @@ const createRule = (check) => {
         const value = source.value.replace(/\?.*$/, "")
         if (!value || !value.startsWith(".") || value.endsWith(".ts")) return
 
-        check(context, node, resolve(dirname(context.getFilename()), value))
+        check(context, node, resolve(dirname(context.filename), value))
       }
 
       return {
