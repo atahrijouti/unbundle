@@ -11,6 +11,9 @@ import { getPages, SERVED_MIME_TYPES } from "./utils/lib"
 import { debounce } from "./utils/functions"
 import { copyKeepingStructure, remakeDir } from "./utils/fs"
 import { CONFIG } from "./config"
+import { version } from "../../package.json"
+
+console.log(`unbundle v${version}`)
 
 process.env.NODE_ENV ??= "development"
 
