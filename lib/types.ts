@@ -12,6 +12,6 @@ export type Metadata = {
 
 export type Module = {
   config?: Config
-  metadata: Metadata
+  metadata?: Partial<Metadata>
   content: () => string
 }
