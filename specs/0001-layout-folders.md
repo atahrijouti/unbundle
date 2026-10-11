@@ -1,6 +1,6 @@
 # 0001 — Layout folders
 
-Status: draft
+Status: accepted
 
 ## Why
 
@@ -52,9 +52,11 @@ Layouts should place `{{sync-scripts}}` before their stylesheet links: an inline
 
 ## Sync scripts take no imports
 
-`sync.ts` is compiled on its own and never bundled. An `import` or `export` in it fails assembly with an error naming the file.
+`sync.ts` is only transpiled, like every other `.ts` file, and never bundled. unbundle doesn't check for `import` or `export`; a classic script can't use them, so they fail in the browser.
 
 This is deliberate: sync scripts block first paint, so they should stay a few lines. Not being able to pull code in keeps them small, and makes it visible when one starts to grow.
+
+Each sync script is wrapped in its own function scope, so the layout's and the page's can declare the same names.
 
 ## Breaking change: 0.2.0
 

@@ -1,6 +1,7 @@
 import path from "node:path"
 import fs from "node:fs"
 import { pathToFileURL } from "node:url"
+import esbuild from "esbuild"
 import prettier from "prettier"
 import type { Metadata, Module } from "../types"
 import { html } from "../client/tags"
@@ -47,69 +48,103 @@ const assembleMetadata = (metadata: Metadata) => {
   return metaTags.join("\n")
 }
 
+const errorPage = (status: number, pageName: string, message: string) => {
+  console.error(message)
+  return {
+    status,
+    html: `<title>${pageName} - ${status}</title><p>${message}</p>${HMR_STRING}`,
+  }
+}
+
+const importModule = async <T>(filePath: string, cacheBuster: string): Promise<T | null> => {
+  if (!fs.existsSync(filePath)) return null
+  return import(pathToFileURL(filePath).href + cacheBuster)
+}
+
+const compileSyncScript = async (filePath: string) => {
+  const result = await esbuild.build({
+    entryPoints: [filePath],
+    logLevel: "warning",
+    format: "esm",
+    target: "esnext",
+    platform: "browser",
+    write: false,
+    bundle: false,
+    minify: false,
+  })
+
+  return `<script>(() => {\n${result.outputFiles[0]?.text ?? ""}\n})()</script>`
+}
+
 export const assemblePage = async (pageName: string): Promise<{ status: number; html: string }> => {
-  let layout = "main.layout.html"
-  const modulePath = path.resolve(`./src/app/${pageName}/index.ts`)
-
-  let content: Module["content"]
-
   const cacheBuster = process.env.NODE_ENV === "development" ? `?t=${Date.now()}` : ""
 
-  let defaultMetadata: Metadata | null = null
-  const defaultMetadataPath = path.resolve(`./src/main.metadata.ts`)
-  if (fs.existsSync(defaultMetadataPath)) {
-    const metadataModule = await import(pathToFileURL(defaultMetadataPath).href + cacheBuster)
-    defaultMetadata = metadataModule.defaultMetadata ?? null
-  }
+  const pageDir = path.resolve(`./src/app/${pageName}`)
+  const modulePath = path.join(pageDir, "index.ts")
+  const siteMetadataPath = path.resolve("./src/metadata.ts")
 
-  if (!fs.existsSync(modulePath)) {
-    console.error(`Can't access module: ${modulePath}`)
-    return {
-      status: 500,
-      html: `<title>${pageName} - 500</title><p>Can't access module: ${modulePath}</p>${HMR_STRING}`,
-    }
-  }
-
-  let metadata: Metadata
-
+  let siteMetadata: { metadata?: Metadata } | null
   try {
-    const module: Module = await import(pathToFileURL(modulePath).href + cacheBuster)
+    siteMetadata = await importModule<{ metadata?: Metadata }>(siteMetadataPath, cacheBuster)
+  } catch (err) {
+    return errorPage(500, pageName, `Failed to load ${siteMetadataPath}: ${err}`)
+  }
+  if (siteMetadata?.metadata == null) {
+    return errorPage(500, pageName, `Missing metadata export: ${siteMetadataPath}`)
+  }
 
-    if (module.metadata == null || module.content == null) {
-      throw new Error("metadata or content unavailable")
-    }
+  let module: Module | null
+  try {
+    module = await importModule<Module>(modulePath, cacheBuster)
+  } catch (err) {
+    return errorPage(500, pageName, `Failed to load ${modulePath}: ${err}`)
+  }
+  if (module == null) {
+    return errorPage(500, pageName, `Can't access module: ${modulePath}`)
+  }
+  if (module.content == null) {
+    return errorPage(400, pageName, `Missing content export: ${modulePath}`)
+  }
 
-    content = module.content
-    metadata = { ...defaultMetadata, ...module.metadata } as Metadata & {
-      title: string
-      description: string
-    }
-    if (module.config?.layout != null) {
-      layout = module.config.layout
+  const layoutName = module.config?.layout ?? "main"
+  const layoutDir = path.resolve(`./src/layouts/${layoutName}`)
+  const layoutPath = path.join(layoutDir, "layout.html")
+
+  if (!fs.existsSync(layoutPath)) {
+    return errorPage(500, pageName, `Can't access layout: ${layoutPath}`)
+  }
+
+  let layoutMetadata: { metadata?: Partial<Metadata> } | null
+  let syncScriptsHtml = ""
+  try {
+    layoutMetadata = await importModule(path.join(layoutDir, "metadata.ts"), cacheBuster)
+
+    for (const dir of [layoutDir, pageDir]) {
+      const syncPath = path.join(dir, "sync.ts")
+      if (fs.existsSync(syncPath)) {
+        syncScriptsHtml += await compileSyncScript(syncPath)
+      }
     }
   } catch (err) {
-    console.error(`Missing module essentials - ${modulePath}`, err)
-    return {
-      status: 400,
-      html: `<title>${pageName} - 400</title><p>Missing module essentials - ${modulePath}</p><p>${err}</p>${HMR_STRING}`,
-    }
+    return errorPage(500, pageName, `${err}`)
   }
 
-  metadata = metadata as Metadata & { title: string }
-
-  const layoutPath = `./src/${layout}`
-
-  if (!fs.existsSync(path.resolve(layoutPath))) {
-    console.error(`Can't access layout: ${layoutPath}`)
-    return {
-      status: 500,
-      html: `<title>${pageName} - 500</title><p>Can't access layout: ${layoutPath}</p>${HMR_STRING}`,
-    }
+  const metadata: Metadata = {
+    ...siteMetadata.metadata,
+    ...layoutMetadata?.metadata,
+    ...module.metadata,
   }
 
-  const responseHtml = await fs.promises.readFile(layoutPath, "utf-8")
+  const layoutUrl = `${CONFIG.BASE_URL}layouts/${layoutName}`
+  const pageUrl = `${CONFIG.BASE_URL}app/${pageName}`
 
-  let assembledHtml = responseHtml.replace("{{title}}", metadata.title)
+  let stylesHtml = ""
+  if (fs.existsSync(path.join(layoutDir, "styles.css"))) {
+    stylesHtml += html`<link rel="stylesheet" href="${layoutUrl}/styles.css" />`
+  }
+  if (fs.existsSync(path.join(pageDir, "styles.css"))) {
+    stylesHtml += html`<link rel="stylesheet" href="${pageUrl}/styles.css" />`
+  }
 
   let scriptsHtml = ""
 
@@ -142,25 +177,24 @@ export const assemblePage = async (pageName: string): Promise<{ status: number; 
     </script>`
   }
 
-  scriptsHtml += html`<script
-    type="module"
-    src="${CONFIG.BASE_URL}app/${pageName}/index.js"></script>`
+  if (fs.existsSync(path.join(layoutDir, "global.ts"))) {
+    scriptsHtml += html`<script type="module" src="${layoutUrl}/global.js"></script>`
+  }
+
+  scriptsHtml += html`<script type="module" src="${pageUrl}/index.js"></script>`
 
   if (process.env.NODE_ENV === "development") {
     scriptsHtml += HMR_STRING
   }
 
+  let assembledHtml = await fs.promises.readFile(layoutPath, "utf-8")
+
+  assembledHtml = assembledHtml.replace("{{title}}", metadata.title)
+  assembledHtml = assembledHtml.replace("<!-- {{sync-scripts}} -->", syncScriptsHtml)
+  assembledHtml = assembledHtml.replace("<!-- {{styles}} -->", stylesHtml)
   assembledHtml = assembledHtml.replace("<!-- {{scripts}} -->", scriptsHtml)
-
-  if (fs.existsSync(path.resolve(`./src/app/${pageName}/styles.css`))) {
-    assembledHtml = assembledHtml.replace(
-      "<!-- {{styles}} -->",
-      `<link rel="stylesheet" href="${CONFIG.BASE_URL}app/${pageName}/styles.css" />`,
-    )
-  }
-
   assembledHtml = assembledHtml.replace("<!-- {{metadata}} -->", assembleMetadata(metadata))
-  assembledHtml = assembledHtml.replace("<!-- {{content}} -->", content())
+  assembledHtml = assembledHtml.replace("<!-- {{content}} -->", module.content())
 
   if (process.env.NODE_ENV !== "production") {
     assembledHtml = assembledHtml.replace(
