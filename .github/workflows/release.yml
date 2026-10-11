@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      released: ${{ steps.version.outputs.released }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - id: version
+        name: Is this version released?
+        run: |
+          tag="v$(node -p 'require("./package.json").version')"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags origin "refs/tags/$tag" > /dev/null; then
+            echo "released=true" >> "$GITHUB_OUTPUT"
+            echo "$tag already released, nothing to do."
+          fi
+
+  release:
+    needs: check
+    if: needs.check.outputs.released != 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ needs.check.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install
+
+      - run: pnpm build
+
+      - name: Commit dist/ and tag it
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch --detach
+          git add --force dist
+          git commit --message "Release $TAG"
+          git tag "$TAG"
+          git push origin "refs/tags/$TAG"
+
+      - name: GitHub release
+        run: gh release create "$TAG" --verify-tag --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}

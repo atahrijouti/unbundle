@@ -1,12 +1,11 @@
 {
   "name": "unbundle",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "type": "module",
   "private": true,
   "description": "I don't like bundling",
   "scripts": {
-    "build": "node build.js",
-    "postinstall": "pnpm run build"
+    "build": "node build.js"
   },
   "bin": {
     "unbundle-serve": "./dist/server/index.js",
