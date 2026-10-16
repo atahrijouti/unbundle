@@ -5,7 +5,7 @@
 ## Steps
 
 - **`build/env`** — `NODE_ENV` defaults to `production` when unset. A value set by the shell is kept and changes the output (see [config.md](config.md#node_env)).
-- **`build/pages`** — The list of pages is read once, when the command loads, before anything is deleted (see [pages.md](pages.md)). A missing `app/` folder throws there, and the command exits non-zero.
+- **`build/pages`** — The list of pages is read from `<SRC_FOLDER>/app/` once, when the command loads (see [pages.md](pages.md)). A missing `app/` folder throws there, and the command exits non-zero.
 - **`build/out-reset`** — `out/` is deleted and recreated.
 - **`build/dist`** — `dist/` is prepared (see below). If that fails, the build exits with code 1. `dist/` is not emptied first, so files from earlier runs, including dev runs, stay in it and end up in `out/`.
 - **`build/copy`** — `public/` is copied into `out/`, then `dist/` on top of it. On a name clash, the file from `dist/` (from `src/`) wins.
@@ -48,4 +48,5 @@ Shared by the build and the dev server.
 - **`build/exit`** — Exit non-zero on any error. Today `build().catch(console.error)` turns every error inside the build into exit code 0.
 - **`build/copy`** — Don't fail when `public/` doesn't exist. Today `cp` throws, the build writes no pages, and (see `build/exit`) still exits 0.
 - **`build/dist`** — Empty `dist/` before a build, so stale files from earlier runs don't ship.
+- **`build/dist`** — Consider renaming `dist/` to a name that says unbundle generates it and authors don't edit it.
 - **`build/ts-imports`** — Rewrite `.ts` in side-effect imports and dynamic `import()` too, and only in real import specifiers, not in strings or comments.

@@ -41,5 +41,5 @@ type Metadata = {
 ## TODO
 
 - **`metadata/tags`** — Review `icon`: it always gets `type="image/png"`, whatever the file is.
-- **`metadata/required`** — Check `title` and `description` at runtime, so a missing `title` is an error instead of the text `undefined`.
+- **`metadata/required`** — Every page must have a title; that's why site metadata is required. The type says so, but nothing checks it at runtime. Check `title` (and `description`, also required by the type) at runtime, so a missing `title` is an error instead of the text `undefined`.
 - **`metadata/escaping`** — Escape every inserted value properly, `title` and the `<link>` hrefs included.

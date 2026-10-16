@@ -25,4 +25,5 @@ What a site imports from unbundle: the browser helpers and the ESLint plugin.
 - **`package/html-css`** — Decide whether `html` and `css` should keep escapes raw (`String.raw(strings, …)`) or process them; either way, drop the `String.raw` call that does nothing.
 - **`package/html-css`** — `esbuild/untag.js` (an esbuild plugin that strips the `html` and `css` tags) is dead code: nothing uses it, and it isn't listed in `files`. Delete it.
 - **`package/eslint-require-extensions`** — Only offer the `.ts` fix when the resulting file exists.
+- **`package/eslint-require-extensions`** — Research whether authors can stop writing `.ts` in relative imports (both Node at build time and the browser need a real file path today), so these rules are no longer needed.
 - **`package/eslint-require-index`** — Build the fix from the source without its query and trailing slash, or skip the fix when there is a query.
