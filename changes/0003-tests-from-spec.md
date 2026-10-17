@@ -15,12 +15,15 @@ Depends on [0002](0002-dev-server-port.md), so dev server tests don't need port 
 ```
 test/
   helpers.ts
-  pages.test.ts       one file per spec file
-  layouts.test.ts
+  page.test.ts        one file per spec file
+  layout.test.ts
   metadata.test.ts
+  scripts.test.ts
+  import-map.test.ts
+  static.test.ts
+  config.test.ts
   build.test.ts
   dev-server.test.ts
-  config.test.ts
   package.test.ts
   coverage.test.ts
 .github/workflows/test.yml
@@ -34,7 +37,7 @@ test/
 - **One test per rule, named by its ID:**
 
   ```ts
-  test("pages/home", async () => {
+  test("page/home", async () => {
     const s = await site({ "src/app/home/index.ts": page("Hi") })
     const { out } = await build(s)
     assert.match(out("index.html"), /Hi/)
@@ -42,18 +45,18 @@ test/
   ```
 
 - **Each test builds its own site** in a temporary folder: a minimal site plus the files the test is about. Helpers run the build, or start the dev server and read its port from the log.
-- **Current behavior is what's tested, TODOs included.** `pages/error-content` is tested as 400. Picking up a TODO changes the spec, the test and the code together.
+- **Current behavior is what's tested, TODOs included.** `page/error-checks` tests a missing `content` as 400. Picking up a TODO changes the spec, the test and the code together.
 - **Coverage:** a test fails if any rule ID in `spec/` has no test with that name, except the rules checked by hand.
 
 ## Not automated
 
-- Checked by hand: `release/*` (needs GitHub Actions and real tags), `dev-server/port` and `dev-server/reload-host` (need a second device).
+- Checked by hand: `dev-server/port` and `dev-server/reload-host` (need a second device).
 - Skipped: `package/text-to-html` needs a DOM, which Node doesn't have, for a helper that only wraps `innerHTML`. It's a `test.skip`, so every run shows it as pending. Write it or delete the helper when it matters.
 
 ## Order
 
-1. Helpers, `pnpm test`, CI, and three tests (`pages/home`, `build/write`, `dev-server/page`) to prove the setup.
-2. The rest, one spec file at a time, then the coverage test.
+1. Helpers, `pnpm test`, CI, and three tests (`page/home`, `build/write`, `page/dev-url`) to prove the setup.
+2. The rest, one element at a time, then the coverage test.
 
 A test that fails against today's code means the spec is wrong or the code has a bug. Each is settled with the author: fix the spec, or test the current behavior and add a TODO.
 

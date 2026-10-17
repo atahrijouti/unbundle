@@ -1,32 +1,35 @@
 # Metadata
 
-Metadata describes a page to the browser and the outside world. It is declared for the site, a layout and a page, and the page gets all three merged.
+## Source
 
-## Shape
+- **`metadata/levels`** — Metadata is declared at three levels:
 
-```ts
-type Metadata = {
-  title: string
-  description: string
-  manifest?: string
-  "theme-color"?: string
-  "color-scheme"?: string
-  icon?: string
-}
-```
+  | Level | Where | Exports |
+  |---|---|---|
+  | Site | `src/metadata.ts`, required | `metadata: Metadata` |
+  | Layout | `src/layouts/<name>/metadata.ts`, optional | `metadata: Partial<Metadata>` |
+  | Page | the page's module, optional | `metadata: Partial<Metadata>` |
 
-| Level | Where | Exports |
-|---|---|---|
-| Site | `src/metadata.ts`, required | `metadata: Metadata` |
-| Layout | `src/layouts/<name>/metadata.ts`, optional | `metadata: Partial<Metadata>` |
-| Page | the page's module, optional | `metadata: Partial<Metadata>` |
+- **`metadata/keys`** — The keys:
 
-## Behavior
+  ```ts
+  type Metadata = {
+    title: string
+    description: string
+    manifest?: string
+    "theme-color"?: string
+    "color-scheme"?: string
+    icon?: string
+  }
+  ```
 
-- **`metadata/merge`** — A page's metadata is the site's, overridden key by key by its layout's, then by its own. Setting a key to `""` or `undefined` overrides too, which removes that tag.
-- **`metadata/no-defaults`** — unbundle adds no metadata of its own.
-- **`metadata/title`** — The title fills `{{title}}`. It produces no tag of its own.
-- **`metadata/tags`** — `<!-- {{metadata}} -->` gets one tag per key that has a value:
+- **`metadata/required`** — `title` and `description` are required by the type only. Nothing checks them at runtime.
+
+## Output
+
+- **`metadata/merge`** — A page's metadata is the site's, overridden key by key by its layout's, then by its own. A key set to `""` or `undefined` overrides too, which removes its tag.
+- **`metadata/title`** — The title fills `{{title}}`. Without a title, the page shows the text `undefined` there.
+- **`metadata/tags`** — `<!-- {{metadata}} -->` gets one tag per key that has a value. Other keys produce nothing:
 
   | Key | Tag |
   |---|---|
@@ -36,14 +39,18 @@ type Metadata = {
   | `manifest` | `<link rel="manifest" href="…" />` |
   | `icon` | `<link rel="icon" href="…" type="image/png" />` |
 
-  Keys not in the table produce nothing.
-- **`metadata/escaping`** — In the three `<meta>` values, `"` and `'` are escaped. Nothing else is, and the title and the `<link>` hrefs aren't escaped at all.
+- **`metadata/escaping`** — In the three `<meta>` values, `"` and `'` are escaped. Nothing else is; the title and the `<link>` hrefs aren't escaped at all.
 - **`metadata/urls`** — `manifest` and `icon` are written as given. The base URL isn't added.
+- **`metadata/no-defaults`** — unbundle adds no metadata of its own.
+
+## Development
+
+No differences. Metadata files are reloaded on each request (see `page/dev-fresh`).
 
 ## Errors
 
-- **`metadata/site`** — Without site metadata, every page fails (see `pages/error-site-metadata`).
-- **`metadata/required`** — `title` and `description` are required by the type only. Without a `title`, the page shows the text `undefined` where the title goes.
+- **`metadata/error-site`** — Without site metadata, every page fails with 500 (see `page/error-checks`).
+- **`metadata/error-layout`** — Layout metadata that fails to load fails the page with 500. Layout metadata without a `metadata` export is ignored.
 
 ## TODO
 

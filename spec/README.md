@@ -1,41 +1,40 @@
 # Spec
 
-What unbundle does today, area by area. This is the reference: when the code and a spec disagree, one of them has a bug. Terms are defined in [`../CONTEXT.md`](../CONTEXT.md).
-
-| File | Covers |
-|---|---|
-| [pages.md](pages.md) | Pages: their folders, module, URLs and errors |
-| [layouts.md](layouts.md) | Layouts, placeholders, global and sync scripts |
-| [metadata.md](metadata.md) | Site, layout and page metadata, and the tags it produces |
-| [build.md](build.md) | The build, the staging folder, the import map |
-| [dev-server.md](dev-server.md) | The dev server and live reload |
-| [config.md](config.md) | The config, development and production |
-| [package.md](package.md) | What a site imports: browser helpers and ESLint rules |
-| [release.md](release.md) | How unbundle is versioned, released and installed |
+What unbundle does today, one element per file. It is a one-to-one record of the code: when they disagree, one of them has a bug. Terms are defined in [`CONTEXT.md`](../CONTEXT.md); history and reasoning live in [`changes/`](../changes/).
 
 ## How a spec file is written
 
-Every file follows the same outline, leaving out sections it has nothing for:
+Every file covers one element, with the same five sections, in this order:
 
-1. **Purpose**: one sentence under the title saying what the area is.
-2. **Shape**: the files or interface the author writes.
-3. **Behavior**: rules in the order things happen, from what the author writes to what the site gets.
-4. **Errors**: what fails, and what the author sees.
-5. **Notes**: advice for authors. Not rules.
-6. **TODO**: known gaps and intended changes.
+1. **Source** — what the author writes, or what unbundle reads.
+2. **Output** — what it becomes in the finished site.
+3. **Development** — how the dev server differs from the build.
+4. **Errors** — what fails, and what the author sees.
+5. **TODO** — known gaps and intended changes.
+
+A section with nothing to say says so ("No differences."), so a missing piece shows up as a question rather than a silence.
 
 Each rule:
 
-- has an ID, `<file>/<rule>` (such as `pages/home`), so tests and change records can point at it. The prefix is the file's name.
-- states one fact the author can observe: files, URLs, HTML, status codes, exit codes.
-- uses the terms in `CONTEXT.md`.
-- names a code detail (a function, a regex) only when the exact text is what the author depends on.
-- is either wanted as it is, or has a TODO to change it. A behavior that is neither doesn't belong in the spec.
+- has an ID, `<file>/<rule>`, so tests and change records can point at it;
+- states one fact the author can observe: files, URLs, HTML, status codes, exit codes, logs;
+- names a code detail only when the exact text is what the author depends on;
+- is either wanted as it is, or has a TODO to change it;
+- lives in the element where the author's action starts. Other elements point to it rather than repeat it.
 
-A TODO names the rule it changes. Picking one up starts a change record in [`../changes/`](../changes/), which holds history and reasoning; the spec only describes the present.
+A TODO names the rule it changes. Picking one up starts a change record; the change updates the rule, its TODO and the tests together.
 
-## Runtime
+Both commands run from the site's root folder. Every path here is relative to it.
 
-- Both commands run from the site's root folder; every path in these specs is relative to it.
-- Node imports the site's TypeScript at build time: each page's module, the metadata files, and what they import. This needs Node's built-in type stripping (Node 22.18 or 23.6 and later; releases are built on Node 24).
-- Node only strips erasable TypeScript, so those files can't use enums, namespaces or parameter properties, and their relative imports must end in `.ts`. The browser copy is transpiled by esbuild, which accepts more, so a file can work in the browser and still fail at build time.
+## Elements
+
+- [Page](page.md)
+- [Layout](layout.md)
+- [Metadata](metadata.md)
+- [Scripts](scripts.md)
+- [Import map](import-map.md)
+- [Static files](static.md)
+- [Config](config.md)
+- [Build](build.md)
+- [Dev server](dev-server.md)
+- [Package](package.md)
