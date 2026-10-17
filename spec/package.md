@@ -34,6 +34,7 @@ None of its own.
 
 ## TODO
 
+- **`package/types`** — Add an optional `ready?: () => void` to `Module`, matching `page/exports`.
 - **`package/html-css`** — Decide whether `html` and `css` should keep escapes as written or process them; either way, drop the `String.raw` call that does nothing.
 - **`package/html-css`** — `esbuild/untag.js` (an esbuild plugin that strips the `html` and `css` tags) is dead code: nothing uses it, and it isn't published. Delete it.
 - **`package/eslint-require-extensions`** — Only offer the `.ts` fix when the resulting file exists.
