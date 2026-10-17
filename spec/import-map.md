@@ -8,7 +8,7 @@
 
 - **`import-map/tag`** — Every page gets it as `<script type="importmap">{ "imports": … }</script>`, first in `<!-- {{scripts}} -->`.
 - **`import-map/base-url`** — When the base URL isn't `/`, paths starting with `./` start with the base URL instead.
-- **`import-map/node-modules`** — Each path starting with `./node_modules/` is copied into the site, keeping its path. A file is copied alone, without what it imports from the rest of its package. A folder is copied whole. A path that doesn't exist is skipped silently.
+- **`import-map/node-modules`** — Each path starting with `./node_modules/` is copied into the site, keeping its path. A file is copied alone, without what it imports from the rest of its package. A folder is copied whole. A path that doesn't exist is skipped silently. Other paths, such as URLs, aren't copied.
 - **`import-map/ships`** — `import-map.json` itself reaches the site like any other source file.
 
 ## Development

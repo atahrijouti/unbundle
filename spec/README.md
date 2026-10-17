@@ -19,7 +19,7 @@ Each rule:
 - has an ID, `<file>/<rule>`, so tests and change records can point at it;
 - states one fact the author can observe: files, URLs, HTML, status codes, exit codes, logs;
 - names a code detail only when the exact text is what the author depends on;
-- is either wanted as it is, or has a TODO to change it;
+- is either wanted as it is, or has a TODO to change it. The rule always says what the code does today; only the TODO says what's wanted instead;
 - lives in the element where the author's action starts. Other elements point to it rather than repeat it.
 
 A TODO names the rule it changes. Picking one up starts a change record; the change updates the rule, its TODO and the tests together.
