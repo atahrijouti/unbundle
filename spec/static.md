@@ -15,7 +15,7 @@
 
 ## Errors
 
-- **`static/error-missing`** — Without a static folder, the build writes no pages and still exits 0.
+- **`static/error-missing`** — Without a static folder, the build writes nothing to the output folder, neither the staging folder nor any page, and still exits 0.
 
 ## TODO
 

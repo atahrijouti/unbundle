@@ -10,7 +10,7 @@
 - **`dev-server/port`** — It listens on port 3000, on every network interface.
 - **`dev-server/staging`** — It empties the staging folder and fills it from the source folder (see [Build](build.md)), then keeps it in sync: changes are collected until none has come in for 50 ms, then the changed `.ts` files are transpiled and other files copied.
 - **`dev-server/watch-deletes`** — Deleted source files stay in the staging folder until the dev server restarts.
-- **`dev-server/serve`** — A request is answered by the first match: a page (see `page/dev-url`), a file in the staging folder, a file in the static folder, or 404 with the text `404 :-/`. A folder is served by its `index.html`. Every HTTP method is answered the same way, and the query string is ignored. A page is sent as `text/html` with its status.
+- **`dev-server/serve`** — A request is answered by the first match: a page (see `page/dev-url`), a file in the staging folder, a file in the static folder, or 404 with the text `404 :-/`. A folder is served by its `index.html`. Every HTTP method is answered the same way, and the query string is ignored. Paths aren't percent-decoded, for pages or files: `/a%20b.txt` doesn't find `a b.txt`. A page is sent as `text/html` with its status.
 - **`dev-server/mime`** — Files get a content type from their lowercased extension, with no charset:
 
   | Extension | Content type |
@@ -30,9 +30,9 @@
 
   Anything else, `.webmanifest` and `.map` included, is `application/octet-stream`.
 - **`dev-server/base-url`** — The base URL is ignored. With a base URL other than `/`, pages ask for their scripts and styles under it, and get 404.
-- **`dev-server/reload`** — After each sync, every open page reloads, debounced to 750 ms. Any change in the source folder triggers it, layout files, metadata and the import map included.
+- **`dev-server/reload`** — After each sync, every open page reloads, debounced to 750 ms. Any changed or new file in the source folder triggers it, layout files, metadata and the import map included. Deleting a file, creating a folder or writing a `.bck` file doesn't.
 - **`dev-server/reload-socket`** — Live reload uses a WebSocket on the dev server's port, accepted on any path.
-- **`dev-server/reload-reconnect`** — A page that loses its connection reloads a second later. While the dev server is down, that repeats every second until it's back.
+- **`dev-server/reload-reconnect`** — A page that loses its connection reloads once, a second later. While the dev server is down, that reload gets the browser's own error page, which has no live reload, so unbundle doesn't try again.
 - **`dev-server/reload-host`** — The page connects to `localhost:3000`, whichever host served it. The script declares a global `ws`.
 
 ## Development
@@ -43,7 +43,7 @@ Not applicable: the dev server is development.
 
 - **`dev-server/error-staging`** — Errors while filling the staging folder at start are logged as `Error preparing dist:`, and the dev server starts anyway.
 - **`dev-server/error-sync`** — During a sync, a syntax error in one `.ts` file stops every `.ts` file of that sync from being written; other files in it are still copied. The error is logged as `Error during transpilation:`, and open pages reload anyway.
-- **`dev-server/crash`** — An unchecked error while producing a page (see `page/error-uncaught`), or a missing `app/` folder, stops the dev server. So does failing to empty the staging folder, or a missing source folder, at start. Open pages then reload every second until it's restarted.
+- **`dev-server/crash`** — An unchecked error while producing a page (see `page/error-uncaught`), or a missing `app/` folder, stops the dev server. So does failing to empty the staging folder, or a missing source folder, at start. Open pages then reload once and show the browser's error page (see `dev-server/reload-reconnect`).
 
 ## TODO
 
@@ -53,3 +53,4 @@ Not applicable: the dev server is development.
 - **`dev-server/base-url`** — Serve the site under its base URL.
 - **`dev-server/reload-host`** — Connect to the host that served the page, so pages opened from another device on the network work. Don't declare a global.
 - **`dev-server/error-sync`** — Don't reload after a failed sync.
+- **`dev-server/reload-reconnect`** — Keep trying every second until the dev server is back, then reload, instead of reloading into the browser's error page.

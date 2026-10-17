@@ -24,7 +24,7 @@
 - **`page/404`** — A page named `404` becomes `404.html`, which GitHub Pages serves for unknown URLs. Nothing else is special about it.
 - **`page/html`** — The page's HTML is its layout file filled with the page (see [Layout](layout.md)). `content()` is called once, with no arguments, and not awaited: an `async` one inserts the text `[object Promise]`.
 - **`page/script`** — The page's module is loaded as a module script from `<base URL>app/<page>/index.js`, and its `styles.css`, if any, from `<base URL>app/<page>/styles.css`.
-- **`page/ready`** — If the module's source contains the text `export const ready`, the page's script ends with `document.addEventListener("DOMContentLoaded", ready)`. It's a text match: `export function ready` and `export { ready }` aren't detected, while `export const readyCount`, or the text in a comment, is, and the script then calls a `ready` that doesn't exist. Only a page's own `index.ts` is checked, and only under a folder named `src` (see `config/keys`).
+- **`page/ready`** — If the module's source contains the text `export const ready`, the page's script gets `document.addEventListener("DOMContentLoaded", ready)` after its code, before its exports. It's a text match: `export function ready` and `export { ready }` aren't detected, while `export const readyCount`, or the text in a comment, is, and the script then throws as soon as it loads, since that `ready` doesn't exist. Only a page's own `index.ts` is checked, and only when its path ends in `src/app/<page>/index.ts` (see `config/keys`).
 
 ## Development
 
@@ -40,8 +40,10 @@
   3. The module doesn't export `content`: 400.
   4. The layout has no layout file: 500.
   5. The layout's metadata fails to load, or a sync script fails to compile: 500.
-- **`page/error-page`** — A failed check gives `<title><page> - <status></title><p><message></p>` instead of the layout, unformatted, and logs the message. The message is raw HTML and includes absolute file paths. The page includes live reload, in production too.
-- **`page/error-uncaught`** — Other errors aren't checked: `content` not being a function or throwing, an invalid import map, a `description`, `theme-color` or `color-scheme` that isn't a string, Prettier failing on the HTML. The dev server stops (see `dev-server/crash`); the build stops writing pages (see `build/exit`).
+
+  In the build, a sync script that doesn't compile stops the build before any page is produced (see `scripts/error-sync`).
+- **`page/error-page`** — A failed check gives `<title><page> - <status></title><p><message></p>` instead of the layout, unformatted, and logs the message. The message is raw HTML; for checks 1 to 4 it includes an absolute file path. The page includes live reload, in production too.
+- **`page/error-uncaught`** — Other errors aren't checked: `content` not being a function or throwing, a `description`, `theme-color` or `color-scheme` that isn't a string (see `metadata/error-type`), Prettier failing on the HTML, and, in the dev server, an invalid import map. The dev server stops (see `dev-server/crash`); the build stops writing pages (see `build/exit`). In the build, an invalid import map fails earlier (see `import-map/error-json`).
 
 ## TODO
 

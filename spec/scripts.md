@@ -3,7 +3,7 @@
 ## Source
 
 - **`scripts/sync`** — A layout and a page can each have a `sync.ts`, their sync script.
-- **`scripts/sync-classic`** — A sync script runs as a classic script. Nothing checks it for `import` or `export`: they stay in the output and fail in the browser. `import type` is fine, since it disappears when transpiled.
+- **`scripts/sync-classic`** — A sync script runs as a classic script. Nothing checks it for `import` or `export`: exports, and imports whose names are used, stay in the output and fail in the browser. `import type`, and an import whose names aren't used, disappear when transpiled.
 - **`scripts/global`** — A layout can have a `global.ts`, its global script.
 
 ## Output
@@ -14,11 +14,11 @@
 
 ## Development
 
-No differences.
+No differences, except for errors (see `scripts/error-sync`).
 
 ## Errors
 
-- **`scripts/error-sync`** — A sync script that fails to compile fails the page with 500 and esbuild's message (see `page/error-checks`).
+- **`scripts/error-sync`** — A sync script is a `.ts` file, so it's also transpiled while filling the staging folder. In the build, one that fails to compile stops the build with exit code 1 (see `build/error-staging`). In the dev server, that error is logged, and the page fails with 500 and esbuild's message (see `page/error-checks`).
 
 ## TODO
 

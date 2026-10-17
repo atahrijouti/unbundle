@@ -15,8 +15,8 @@
   }
   ```
 
-  The values shown are the defaults. An object is merged over them key by key; unknown keys are kept and unused. A default export that isn't an object is ignored.
-- **`config/base-url`** — A `/` is added to the end of the base URL if it's missing. Nothing is added at the start, so `"blog"` gives relative URLs. A value that isn't a string becomes text, such as `"undefined/"`.
+  The values shown are the defaults. An object is merged over them key by key; unknown keys are kept and unused. A default export that isn't an object is ignored. On Windows no config loads, even a valid one: importing it fails, and the command exits with code 1.
+- **`config/base-url`** — A `/` is added to the end of the base URL if it's missing. Nothing is added at the start, so `"blog"` gives relative URLs. `null` and `undefined` become `"null/"` and `"undefined/"`; any other value that isn't a string stops the command with exit code 1.
 - **`config/node-env`** — `NODE_ENV` decides between development and production. The dev server sets `development` and the build `production`, unless it's already set. The config loads before that, so it only sees a `NODE_ENV` set by the shell.
 
 ## Output
@@ -54,4 +54,5 @@
 
 ## TODO
 
+- **`config/file`** — Load the config on Windows.
 - **`config/keys`** — Use every key everywhere it applies, so the config overrides everything, and make `NODE_MODULES_FOLDER` mean something or remove it.
