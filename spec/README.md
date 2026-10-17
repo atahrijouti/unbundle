@@ -1,10 +1,10 @@
 # Spec
 
-What unbundle does today, one element per file. It is a one-to-one record of the code: when they disagree, one of them has a bug. Terms are defined in [`CONTEXT.md`](../CONTEXT.md); history and reasoning live in [`changes/`](../changes/).
+What unbundle does today, one topic per file. It is a one-to-one record of the code: when they disagree, one of them has a bug. Terms are defined in [`CONTEXT.md`](../CONTEXT.md); history and reasoning live in [`changes/`](../changes/).
 
 ## How a spec file is written
 
-Every file covers one element, with the same five sections, in this order:
+Every file covers one topic, with the same five sections, in this order:
 
 1. **Source** — what the author writes, or what unbundle reads.
 2. **Output** — what it becomes in the finished site.
@@ -20,13 +20,13 @@ Each rule:
 - states one fact the author can observe: files, URLs, HTML, status codes, exit codes, logs;
 - names a code detail only when the exact text is what the author depends on;
 - is either wanted as it is, or has a TODO to change it. The rule always says what the code does today; only the TODO says what's wanted instead;
-- lives in the element where the author's action starts. Other elements point to it rather than repeat it.
+- lives in the topic where the author's action starts. Other topics point to it rather than repeat it.
 
 A TODO names the rule it changes. Picking one up starts a change record; the change updates the rule, its TODO and the tests together.
 
 Both commands run from the site's root folder. Every path here is relative to it.
 
-## Elements
+## Topics
 
 - [Page](page.md)
 - [Layout](layout.md)

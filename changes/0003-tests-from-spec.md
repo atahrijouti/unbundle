@@ -34,7 +34,7 @@ test/
 ## How tests work
 
 - **From the outside only.** Tests run the two commands and check what an author would see: output files, HTML, status codes, exit codes, logs. They never import from `lib/`, so the code can be reshaped freely.
-- **One test per rule, named by its ID:**
+- **At least one test per rule, named by its ID** (`page/error-checks: missing content`, when a rule has several):
 
   ```ts
   test("page/home", async () => {
@@ -46,7 +46,7 @@ test/
 
 - **Each test builds its own site** in a temporary folder: a minimal site plus the files the test is about. Helpers run the build, or start the dev server and read its port from the log.
 - **Current behavior is what's tested, TODOs included.** `page/error-checks` tests a missing `content` as 400. Picking up a TODO changes the spec, the test and the code together.
-- **Coverage:** a test fails if any rule ID in `spec/` has no test with that name, except the rules checked by hand.
+- **Coverage:** a test fails if any rule ID in `spec/` has no test named after it, except the rules checked by hand.
 
 ## Not automated
 
@@ -56,7 +56,7 @@ test/
 ## Order
 
 1. Helpers, `pnpm test`, CI, and three tests (`page/home`, `build/write`, `page/dev-url`) to prove the setup.
-2. The rest, one element at a time, then the coverage test.
+2. The rest, one topic at a time, then the coverage test.
 
 A test that fails against today's code means the spec is wrong or the code has a bug. Each is settled with the author: fix the spec, or test the current behavior and add a TODO.
 
