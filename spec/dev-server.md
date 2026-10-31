@@ -42,7 +42,7 @@
 
 ## TODO
 
-- **`dev-server/port`** — Make the dev server's port and host configurable (see [0002](../changes/0002-dev-server-port.md)).
+- **`dev-server/port`** — Make the dev server's port and host configurable.
 - **`dev-server/serve/order`** — Serve the `404` page with status 404 when one exists, instead of `404 :-/`. `/404` should also return 404, like GitHub Pages.
 - **`dev-server/serve/mime`** — Cover file types as exhaustively as practical, `.webmanifest` and `.map` included.
 - **`dev-server/serve/base-url`** — Serve the site under its base URL.

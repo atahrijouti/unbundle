@@ -32,7 +32,7 @@
   | `<!-- {{content}} -->` | What `content()` returns (see `page/module/content`). |
 
 - **`layout/placeholders/form`** — `{{title}}` is written bare. Every other placeholder is an HTML comment written exactly `<!-- {{name}} -->`, with one space on each side; written any other way, it isn't filled.
-- **`layout/placeholders/missing`** — A placeholder the layout file leaves out is skipped, with what it would have brought: a layout file without `<!-- {{scripts}} -->` gets no import map, no scripts and no live reload.
+- **`layout/placeholders/missing`** — A placeholder the layout file leaves out is skipped, so what it would have brought doesn't reach the page: a layout file without `<!-- {{scripts}} -->` gets no import map, no scripts and no live reload. Every value except a function title (see `metadata/title`) is still produced, so its errors still happen: `content()` runs even without `<!-- {{content}} -->`.
 - **`layout/placeholders/first-only`** — Only the first occurrence of each placeholder is filled.
 - **`layout/placeholders/order`** — Because they're filled in order, a filled value that contains a later placeholder gets it filled, when it comes before the layout's own, which is then left unfilled. Placeholders in `content()`, filled last, are never filled.
 - **`layout/placeholders/dollar`** — `$$`, `$&`, `` $` `` and `$'` in a filled value are treated as replacement patterns, not text: `Price $$5` in `content()` comes out as `Price $5`. This applies to every placeholder.

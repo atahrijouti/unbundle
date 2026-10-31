@@ -14,8 +14,8 @@ The dev server only ever uses port 3000. A second dev server, such as another si
 
 ## Spec changes
 
-- `dev-server/port`: 3000, or the next free port.
-- `dev-server/reload/host`: connects to the host that served the page. Its TODO is removed, since pages opened from another device now live reload too.
+- `dev-server/port`: 3000, or the next free port. Its TODO stays.
+- `dev-server/reload/host`: connects to the host and port that served the page, and declares no global. Its TODO is removed, since pages opened from another device now live reload too.
 
 ## Rejected
 

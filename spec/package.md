@@ -13,7 +13,7 @@
   What a site imports reaches the site through the import map like any other module (see `import-map/node-modules/copy`).
 - **`package/types`** — `Metadata`, `Module` and `Config` describe metadata and a page's module. `Module` has `content`, `metadata` and `config`, but no `ready` (see `page/module/exports`).
 
-## Browser helpers
+## Helpers
 
 - **`package/helpers/html-css`** — `html` and `css` are template tags that return the same string an untagged template literal would: escapes processed, values interpolated. They exist so editors highlight the HTML and CSS inside them. The code calls `String.raw`, but passes it the processed strings, so it has no effect. A part of the template holding an escape that isn't valid JavaScript, such as CSS's `\2014`, comes out as the text `undefined`.
 - **`package/helpers/text-to-html`** — `textToHTML(string)` sets the string as the `innerHTML` of a new `<div>` and returns its first element, still a child of that detached `<div>`. Text and later elements are dropped, and markup that can't sit in a `<div>`, such as a lone `<tr>`, parses to nothing. With no element, it logs an error and returns an empty `<div>`. It needs a DOM, so it throws in Node, `content()` included.

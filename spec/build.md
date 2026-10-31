@@ -12,4 +12,4 @@
 
 ## TODO
 
-None.
+- **`build/html`** — Don't write pages that fail; skip them and report them (see the TODOs on `errors/page/error-page`).

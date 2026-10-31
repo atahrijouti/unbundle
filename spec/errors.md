@@ -23,11 +23,11 @@ What happens when something fails, in the build and in the dev server.
 - **`errors/staging/transpile`** — All the `.ts` files of one fill or sync are transpiled together: a syntax error in one, a `sync.ts` included, stops all of them from being written. Other files are still copied.
 - **`errors/staging/build`** — In the build, any error while filling the staging folder, such as a syntax error or an invalid import map, is logged as `Error preparing dist:` and exits with code 1, before any page is produced.
 - **`errors/staging/dev-server`** — In the dev server, errors while filling the staging folder at start are logged as `Error preparing dist:`, and the dev server starts anyway.
-- **`errors/staging/sync`** — When a sync fails, the error is logged as `Error during transpilation:`, and open pages reload anyway.
+- **`errors/staging/sync`** — When a sync fails, such as on a syntax error or an invalid import map, the error is logged as `Error during transpilation:`, and open pages reload anyway.
 
 ## Import map
 
-- **`errors/import-map`** — An import map that isn't valid JSON fails the build while filling the staging folder, with exit code 1 (see `errors/staging/build`). In the dev server it's logged at start, and the first page request stops the dev server, since each page reads the import map again (see `errors/page/unchecked`).
+- **`errors/import-map`** — An import map that isn't valid JSON fails the build while filling the staging folder, with exit code 1 (see `errors/staging/build`). In the dev server it's only logged, at start or when an edit to it is synced (see `errors/staging/dev-server`, `errors/staging/sync`). The next page request that passes the checks then stops the dev server, since each such page reads the import map again (see `errors/page/unchecked`).
 
 ## Static folder
 
@@ -49,7 +49,7 @@ What happens when something fails, in the build and in the dev server.
 
 - **`errors/page/checks`** — A missing `content` export is 500, like the other checks.
 - **`errors/page/error-page`** — Live reload only in development. Escape the message.
-- **`errors/page/error-page`** — Only the dev server shows error pages. The build doesn't write pages that fail: it skips them, builds the rest, reports each failed page and why, then exits non-zero.
+- **`errors/page/error-page`** — Only the dev server shows error pages. The build doesn't write pages that fail: it skips them, builds the rest, reports on the command line each failed page and why, then exits non-zero.
 - **`errors/page/unchecked`** — In the dev server, every error while producing a page becomes a 500 error page, and the dev server keeps running. In the build, it's reported on the command line, and no HTML is written for that page.
 - **`errors/staging/dev-server`** — Show errors from filling the staging folder in the browser too, on the page being viewed, not only in the log.
 - **`errors/staging/sync`** — Don't reload after a failed sync.

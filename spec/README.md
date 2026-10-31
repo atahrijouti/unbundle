@@ -9,7 +9,7 @@ Each file covers one topic, split into concepts, one `##` heading each, and ends
 1. what the author writes, or what unbundle reads;
 2. what it becomes in the finished site;
 3. how development or the dev server differs;
-4. what fails, pointing to [Errors](errors.md), which gathers every failure in one place.
+4. what fails. [Errors](errors.md) gathers what fails while producing a page, filling the staging folder or running either command, so the build and the dev server can be compared side by side. Other failures stay with the rule they belong to.
 
 Only the parts that apply are written. When writing or reviewing a concept, ask all four questions, so a missing answer is a choice rather than an oversight.
 

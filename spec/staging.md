@@ -2,14 +2,14 @@
 
 ## Filling it
 
-- **`staging/fill`** — The build and the dev server both start by filling the staging folder (`dist/`) from the source folder. Transpiled and copied files wait there: the build then writes them to the output folder (see `build/write`), and the dev server serves them (see `dev-server/serve/order`) and writes nothing to the output folder.
+- **`staging/fill`** — Before producing any page, the build and the dev server fill the staging folder (`dist/`) from the source folder. Transpiled and copied files wait there: the build then writes them to the output folder (see `build/write`), and the dev server serves them (see `dev-server/serve/order`) and writes nothing to the output folder.
 - **`staging/ships-all`** — Every file in the source folder reaches the staging folder, keeping its path, including files only used at build time such as layout files and metadata. Empty folders don't.
 - **`staging/build`** — The build doesn't empty the staging folder first: files from earlier runs, the dev server's included, stay and reach the output folder.
 - **`staging/dev-server`** — The dev server empties the staging folder at start, then keeps it in sync: changes are collected until none has come in for 50 ms, then the changed `.ts` files are transpiled and other files copied. Deleted source files stay in the staging folder until the dev server restarts.
 
 ## Copying
 
-- **`staging/copy`** — Files other than `.ts` are copied unchanged. Copying happens before transpiling.
+- **`staging/copy`** — Files other than `.ts` are copied unchanged. When the staging folder is filled, copying happens before transpiling, so an `x.ts` overwrites an `x.js` next to it. In the dev server, whichever of the two was synced last wins; when both change in the same sync, either can win.
 
 ## Transpiling
 
@@ -22,5 +22,6 @@
 - **`staging/fill`** — Consider renaming `dist/` to a name that says unbundle generates it and authors don't edit it.
 - **`staging/ships-all`** — Consider leaving files only used at build time out of the site, or a config entry with glob patterns for files to leave out.
 - **`staging/build`** — Empty the staging folder before a build, so stale files don't ship.
+- **`staging/copy`** — Make the same file win when an `x.ts` and an `x.js` sit side by side, in a fill and in every sync, or report the clash as an error.
 - **`staging/dev-server`** — Remove a file from the staging folder when it's deleted from the source folder.
 - **`staging/ts-imports`** — Change `.ts` in side-effect imports and `import()` too, and only in real import paths, not in strings or comments.

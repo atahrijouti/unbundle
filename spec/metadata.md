@@ -10,7 +10,7 @@
   | Layout | `src/layouts/<name>/metadata.ts`, optional | `metadata: Partial<Metadata>` |
   | Page | the page's module, optional | `metadata: Partial<Metadata>` |
 
-- **`metadata/export`** — Each level is read only for its `metadata` export. A layout's `metadata.ts` that loads but has no `export const metadata` is ignored, without a warning.
+- **`metadata/export`** — Metadata comes only from each level's `metadata` export. A layout's `metadata.ts` that loads but has no `export const metadata` is ignored, without a warning.
 - **`metadata/keys`** — The keys:
 
   ```ts
