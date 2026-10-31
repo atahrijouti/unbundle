@@ -28,6 +28,10 @@ _Avoid_: dist, build, export
 One page of the site, end to end: its folder and module in the source folder, the content and metadata it describes, the URL it lives at (such as `/resume`), and what the browser receives there. Its module runs at build time and in the browser.
 _Avoid_: page module, page script, page content, route, view
 
+**Page URL**:
+The path a page is served at: `/` for `home`, `/<name>` for any other page. It's separate from the file the build writes for it, such as `<name>.html`.
+_Avoid_: route, path, slug
+
 **Metadata**:
 What describes a page to the browser and the outside world, such as its title, description and icon. Every page should have a title. It is declared at three levels, site, layout and page: each page's metadata is the site's, overridden by its layout's, overridden by its own.
 _Avoid_: head, meta, SEO

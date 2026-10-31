@@ -2,7 +2,7 @@
 
 ## Source
 
-- **`import-map/file`** — The import map is `src/import-map.json`, optional: a flat `{ "<name>": "<path>" }` object, without the standard `imports` key.
+- **`import-map/file`** — The import map is `src/import-map.json`, optional: a flat `{ "<name>": "<path>" }` object. unbundle wraps it in the browser's `imports` key when it writes the tag (see `import-map/tag`).
 
 ## Output
 
@@ -21,4 +21,5 @@
 
 ## TODO
 
+- **`import-map/file`** — Use the browser's standard import map format, `{ "imports": { … } }`, so maps can be copied as they are and can use `scopes` and `integrity`.
 - **`import-map/node-modules`** — Research a better way to bring `node_modules` dependencies into the site, so a file arrives with what it imports from its package.

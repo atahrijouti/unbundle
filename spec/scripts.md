@@ -2,15 +2,23 @@
 
 ## Source
 
-- **`scripts/sync`** — A layout and a page can each have an optional `sync.ts`: their sync script.
-- **`scripts/sync-classic`** — A sync script runs as a classic script. Nothing checks it for `import` or `export`: exports, and imports whose names are used, stay in the output and fail in the browser. `import type`, and an import whose names aren't used, disappear when transpiled.
+- **`scripts/kinds`** — There are two kinds of script besides the page's own `index.ts`:
+
+  | | Sync script (`sync.ts`) | Global script (`global.ts`) |
+  |---|---|---|
+  | Who can have one | a layout and a page | a layout only |
+  | How it reaches the page | its code is pasted inline at `<!-- {{sync-scripts}} -->` | `global.js` is linked at `<!-- {{scripts}} -->` |
+  | When it runs | as soon as the browser reaches it, before first paint | after the HTML is parsed, as a module |
+  | Can it import | no | yes |
+  | Typical use | what's needed before first paint, such as setting the theme | code every page of the layout shares |
+
+- **`scripts/sync`** — A layout and a page can each have an optional `sync.ts`. Its code ends up pasted into the page's HTML as a plain `<script>`, not `type="module"`, so it can't use `import` or `export`. Nothing checks for them; they fail in the browser. `import type`, and imports whose names are never used, are removed when transpiled, so those are fine.
 - **`scripts/global`** — A layout can have an optional `global.ts`: its global script.
 
 ## Output
 
-- **`scripts/sync-inline`** — Each sync script is read from `src/`, transpiled, not bundled, and inlined in `<!-- {{sync-scripts}} -->` as a classic `<script>`, wrapped in `(() => { … })()` so the layout's and the page's can use the same names. The layout's comes first.
-- **`scripts/sync-placement`** — The browser runs a sync script as soon as it reaches it. Placed after a stylesheet link, it waits for that stylesheet to download.
-- **`scripts/global-module`** — The global script is loaded as a module script from `<base URL>layouts/<name>/global.js` on every page using that layout, before the page's script.
+- **`scripts/sync-inline`** — unbundle reads each `sync.ts` from `src/`, transpiles it without bundling, and pastes the code into `<!-- {{sync-scripts}} -->` as `<script>(() => { … })()</script>`, the layout's first. Each one is wrapped in its own function, so the two can use the same names.
+- **`scripts/global-module`** — The layout's `global.ts` becomes `global.js`, loaded as a module script from `<base URL>layouts/<name>/global.js` on every page using that layout, before the page's `index.js`.
 
 ## Development
 

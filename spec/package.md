@@ -37,6 +37,6 @@ None of its own.
 - **`package/types`** — Add an optional `ready?: () => void` to `Module`, matching `page/exports`.
 - **`package/html-css`** — Decide whether `html` and `css` should keep escapes as written or process them; either way, drop the `String.raw` call that does nothing.
 - **`package/html-css`** — `esbuild/untag.js` (an esbuild plugin that strips the `html` and `css` tags) is dead code: nothing uses it, and it isn't published. Delete it.
-- **`package/eslint-require-extensions`** — Only offer the `.ts` fix when the resulting file exists.
+- **`package/eslint-require-extensions`** — Research how the fix should handle a path whose file doesn't exist. For example: add `.ts` only when that file exists, replace `.js` with `.ts` when `./x.ts` exists, and otherwise report without a fix.
 - **`package/eslint-require-extensions`** — Research whether authors can stop writing `.ts` in relative imports, so these rules are no longer needed.
 - **`package/eslint-require-index`** — Build the fix from the path without its query and trailing slash, or skip the fix when there's a query.

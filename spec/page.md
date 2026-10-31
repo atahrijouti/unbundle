@@ -19,8 +19,8 @@
 
 ## Output
 
-- **`page/home`** — `home` becomes `index.html`, at `/`.
-- **`page/name`** — Any other page becomes `<name>.html`. `/<name>` without `.html` only works if the host resolves it; GitHub Pages does.
+- **`page/home`** — `home` becomes `index.html`; its page URL is `/`.
+- **`page/name`** — Any other page becomes `<name>.html`; its page URL is `/<name>`, which only works without `.html` if the host resolves it. GitHub Pages does.
 - **`page/index-clash`** — A page named `index` also becomes `index.html`. With both `home` and `index`, the last one written wins, in the order the folders are listed.
 - **`page/404`** — A page named `404` becomes `404.html`, which GitHub Pages serves for unknown URLs. Nothing else is special about it.
 - **`page/html`** — The page's HTML is its layout file, with each placeholder replaced by the matching piece of the page: its title, metadata, styles, scripts and `content()` (see [Layout](layout.md)). `content()` is called once, with no arguments, and isn't awaited.
@@ -30,9 +30,9 @@
 
 ## Development
 
-- **`page/dev-url`** — `/` and `/<name>` serve the page. So does `/home`. `/<name>.html`, `/<name>/` and names that need percent-encoding don't.
+- **`page/dev-url`** — The dev server serves each page at its page URL, `/` or `/<name>`. `/home` serves the home page too. `/<name>.html`, `/<name>/` and names that need percent-encoding don't.
 - **`page/dev-found`** — Pages are found on each request, so a new page shows up without a restart.
-- **`page/dev-fresh`** — Each request reloads the page's module and the metadata files. Modules they import are not reloaded until the dev server restarts. The layout file, sync scripts and the import map are read again on every request, in any mode.
+- **`page/dev-fresh`** — Each request reloads the page's module and the metadata files. Modules they import are not reloaded until the dev server restarts. The layout file, the `sync.ts` files and the import map are read again on every request, in any mode.
 
 ## Errors
 
@@ -50,9 +50,11 @@
 ## TODO
 
 - **`page/folder`** — Research producing several pages from one page, for blogs and other lists. Astro does it with `[slug].astro` files exporting `getStaticPaths()`, run at build time, returning one `{ params, props }` per page.
+- **`page/module`** — Export helpers that tell build time from the browser, such as `isBrowser`, so a page module can guard browser-only code without `typeof document` checks.
+- **`page/node`** — Research how to deal with the gap between what Node accepts at build time and what the browser copy accepts, so a page doesn't work in one and fail in the other.
 - **`page/name`** — Add a config option to write `<name>/index.html` instead of `<name>.html`, like Astro's `build.format`; the dev server accepts the matching URLs.
 - **`page/index-clash`** — Reject a page named `index`, or resolve the clash with `home`.
-- **`page/ready`** — Detect a `ready` export properly instead of matching text. Keep adding the listener to the page's script, so it stays visible there.
+- **`page/ready`** — Detect a `ready` export properly instead of matching text. Keep adding the listener to the page's `index.js`, so it stays visible there.
 - **`page/error-checks`** — A missing `content` export is 500, like the other checks.
 - **`page/error-page`** — Live reload only in development. Escape the message. Only the dev server shows error pages; the build reports a failing page on the command line and writes no HTML for it (see `build/html`).
 - **`page/error-uncaught`** — In the dev server, every error while producing a page becomes a 500 error page, and the dev server keeps running. In the build, it's reported on the command line, and no HTML is written for that page.

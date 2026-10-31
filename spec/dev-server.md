@@ -54,5 +54,6 @@ Not applicable: the dev server is development.
 - **`dev-server/crash`** — Catch errors while answering a request and return a 500 page instead of stopping.
 - **`dev-server/base-url`** — Serve the site under its base URL.
 - **`dev-server/reload-host`** — Connect to the host that served the page, so pages opened from another device on the network work. Don't declare a global.
+- **`dev-server/error-staging`** — Show errors from filling the staging folder in the browser too, on the page being viewed, not only in the log.
 - **`dev-server/error-sync`** — Don't reload after a failed sync.
 - **`dev-server/reload-reconnect`** — Keep trying every second until the dev server is back, then reload, instead of reloading into the browser's error page.

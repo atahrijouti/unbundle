@@ -3,7 +3,7 @@
 ## Source
 
 - **`build/command`** — `unbundle-build` reads the source folder, the static folder and the config.
-- **`build/pages`** — It finds the pages once, when it starts.
+- **`build/pages`** — The build lists the pages once, when it starts; it only runs once. The dev server lists them again on every request (see `page/dev-found`).
 
 ## Output
 

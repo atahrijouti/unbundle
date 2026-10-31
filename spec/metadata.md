@@ -27,9 +27,9 @@
 
 ## Output
 
-- **`metadata/merge`** — A page's metadata is the site's, overridden key by key by its layout's, then by its own. A key set to `""` or `undefined` overrides too, which removes its tag.
+- **`metadata/merge`** — A page's metadata is the site's, overridden entry by entry by its layout's, then by its own. An entry set to `""` or `undefined` overrides too, so it has no value and renders no tag.
 - **`metadata/title`** — The title fills the title placeholder (see `layout/placeholder-form`). Without a title, the page shows the text `undefined` there.
-- **`metadata/tags`** — `<!-- {{metadata}} -->` gets one tag per key whose value isn't falsy. Other keys produce nothing:
+- **`metadata/tags`** — `<!-- {{metadata}} -->` gets one tag per entry whose value isn't falsy. Entries with other keys render nothing:
 
   | Key | Tag |
   |---|---|
@@ -51,11 +51,14 @@
 ## Errors
 
 - **`metadata/error-site`** — Without site metadata, every page fails with 500 (see `page/error-checks`).
-- **`metadata/error-layout`** — Layout metadata that fails to load fails the page with 500. Layout metadata without a `metadata` export is ignored.
+- **`metadata/error-layout`** — A layout's `metadata.ts` that fails to load fails the page with 500. One that loads but has no `export const metadata` is ignored, without a warning.
 - **`metadata/error-type`** — `description`, `theme-color` and `color-scheme` are expected to be strings. Any other value that isn't falsy, such as a number or an object, throws while the page is produced, an error nothing checks for (see `page/error-uncaught`). Falsy values such as `0` or `false` are skipped, like `""`. The other keys are written as text, whatever their type, with one exception: a `title` that's a function is called, and what it returns becomes the title.
 
 ## TODO
 
 - **`metadata/required`** — Every page must have a title; that's why site metadata is required. Check `title` (and `description`, also required by the type) at runtime, so a missing title is an error instead of the text `undefined`.
+- **`metadata/tags`** — Render a tag only for entries whose value isn't `null` or `undefined`. Render any string as is, `""` included.
 - **`metadata/tags`** — Review `icon`: it always gets `type="image/png"`, whatever the file is.
+- **`metadata/urls`** — Apply the base URL to `manifest` and `icon` paths that start with `./`, the way the import map does.
+- **`metadata/error-layout`** — Warn when a layout's `metadata.ts` has no `metadata` export.
 - **`metadata/escaping`** — Escape every value properly, the title and the `<link>` hrefs included.
