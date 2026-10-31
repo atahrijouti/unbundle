@@ -1,52 +1,59 @@
 # Layout
 
-## Source
+## Folder
 
-- **`layout/folder`** — A layout is a folder in `src/layouts/`, named after its folder. Its `layout.html` is the layout file, and is required.
-- **`layout/files`** — A layout's folder can also hold an optional `metadata.ts` (see [Metadata](metadata.md)), `styles.css`, `sync.ts` and `global.ts` (see [Scripts](scripts.md)). Other files in the layout's folder reach the site like the rest of the source folder; unbundle doesn't read them.
+- **`layout/folder/location`** — A layout is a folder in `src/layouts/`, named after its folder. Its files are at `<base URL>layouts/<name>/`.
+- **`layout/folder/files`** — What unbundle does with the files in a layout's folder:
+
+  | File | | What happens to it |
+  |---|---|---|
+  | `layout.html` | required | The layout file (see Placeholders). |
+  | `metadata.ts` | optional | The layout's metadata (see `metadata/levels`). |
+  | `styles.css` | optional | Linked before the page's (see `layout/placeholders/list`). |
+  | `sync.ts` | optional | Pasted into the page's HTML (see `scripts/sync/inline`). |
+  | `global.ts` | optional | Loaded on every page using the layout (see `scripts/global`). |
+  | anything else | | Reaches the site like the rest of the source folder; unbundle doesn't read it. |
+
+## Pick
+
 - **`layout/pick`** — A page uses the layout named in its `config.layout`, or `main` when that's `undefined` or `null`. The name isn't checked: it's used as part of a path, so `""` points at `src/layouts/` itself and `../x` works.
-- **`layout/placeholders`** — The layout file can contain these placeholders:
+
+## Placeholders
+
+- **`layout/placeholders/list`** — The layout file can contain these placeholders, filled in this order:
 
   | Placeholder | Filled with |
   |---|---|
-  | `{{title}}` | The page's title |
-  | `<!-- {{sync-scripts}} -->` | The layout's `sync.ts`, then the page's |
-  | `<!-- {{styles}} -->` | The layout's `styles.css`, then the page's |
-  | `<!-- {{scripts}} -->` | The import map, the layout's `global.js`, the page's `index.js`, live reload |
-  | `<!-- {{metadata}} -->` | The page's metadata tags |
-  | `<!-- {{content}} -->` | The page's `content()` |
+  | `{{title}}` | The page's title (see `metadata/title`). |
+  | `<!-- {{sync-scripts}} -->` | The layout's `sync.ts`, then the page's (see `scripts/sync/inline`). |
+  | `<!-- {{styles}} -->` | A `<link rel="stylesheet">` for the layout's `styles.css`, then the page's, for each that exists. |
+  | `<!-- {{scripts}} -->` | In order: the import map, if there is one (see `import-map/tag`); the layout's `global.js`, if it has a `global.ts`; the page's `index.js`; in development, the live reload script (see `dev-server/reload/trigger`). |
+  | `<!-- {{metadata}} -->` | The page's metadata tags (see `metadata/tags/keys`). |
+  | `<!-- {{content}} -->` | What `content()` returns (see `page/module/content`). |
 
-- **`layout/placeholder-form`** — `{{title}}` is written bare. Every other placeholder is an HTML comment written exactly `<!-- {{name}} -->`, with one space on each side; written any other way, it isn't filled.
-- **`layout/production-only`** — A production-only block runs from `<!-- {{production-only:start}} -->` to the next `<!-- {{production-only:end}} -->`, written exactly so. Blocks don't nest.
+- **`layout/placeholders/form`** — `{{title}}` is written bare. Every other placeholder is an HTML comment written exactly `<!-- {{name}} -->`, with one space on each side; written any other way, it isn't filled.
+- **`layout/placeholders/missing`** — A placeholder the layout file leaves out is skipped, with what it would have brought: a layout file without `<!-- {{scripts}} -->` gets no import map, no scripts and no live reload.
+- **`layout/placeholders/first-only`** — Only the first occurrence of each placeholder is filled.
+- **`layout/placeholders/order`** — Because they're filled in order, a filled value that contains a later placeholder gets it filled, when it comes before the layout's own, which is then left unfilled. Placeholders in `content()`, filled last, are never filled.
+- **`layout/placeholders/dollar`** — `$$`, `$&`, `` $` `` and `$'` in a filled value are treated as replacement patterns, not text: `Price $$5` in `content()` comes out as `Price $5`. This applies to every placeholder.
+- **`layout/placeholders/unfilled`** — Outside development, unfilled placeholders written as comments are removed. This matches any `<!-- {{…}} -->`, whatever its spacing, so a mistyped placeholder is never filled but still disappears. A bare `{{title}}` left unfilled, such as a second one or one in `content()`, stays. In development, every unfilled placeholder stays in the HTML.
 
-## Output
+## Production-only blocks
 
-- **`layout/urls`** — A layout's files are at `<base URL>layouts/<name>/`.
-- **`layout/placeholder-order`** — Placeholders are filled in the order of the table above, `{{title}}` first and `<!-- {{content}} -->` last. A filled value that contains a later placeholder gets it filled, when it comes before the layout's own, which is then left unfilled. Placeholders in `content()` are never filled.
-- **`layout/placeholder-first-only`** — Only the first occurrence of each placeholder is filled. A placeholder the layout file leaves out is skipped.
-- **`layout/placeholder-dollar`** — `$$`, `$&`, `` $` `` and `$'` in a filled value are treated as replacement patterns, not text: `Price $$5` in `content()` comes out as `Price $5`. This applies to every placeholder.
-- **`layout/styles`** — `<!-- {{styles}} -->` gets a `<link rel="stylesheet">` for the layout's `styles.css`, then the page's, for each that exists.
-- **`layout/scripts`** — `<!-- {{scripts}} -->` gets, in order: the import map if there is one, the layout's `global.js` if it has a `global.ts`, and the page's `index.js`. A layout file without `<!-- {{scripts}} -->` gets none of these.
-- **`layout/production-blocks`** — Production-only blocks keep their content; their markers are removed.
-- **`layout/placeholder-strip`** — Placeholders left unfilled are removed when they're comments. This matches any `<!-- {{…}} -->`, whatever its spacing, so a mistyped placeholder is never filled but still disappears. A bare `{{title}}` left unfilled, such as a second one or one in `content()`, stays.
+- **`layout/production-only/markers`** — A production-only block runs from `<!-- {{production-only:start}} -->` to the next `<!-- {{production-only:end}} -->`, written exactly so. Blocks don't nest.
+- **`layout/production-only/production`** — In production, the markers are removed and the content stays.
+- **`layout/production-only/other-modes`** — In any other mode, development included, the whole block is removed, markers and content. Placeholders inside it are filled first, then removed with it.
+
+## Formatting
+
 - **`layout/format`** — The finished HTML is formatted with Prettier's default settings, so it reads well in View Source. The site's Prettier config isn't used.
-
-## Development
-
-- **`layout/dev-production-blocks`** — Production-only blocks are removed, markers and content. Placeholders inside them are filled first, then removed with them.
-- **`layout/dev-placeholders`** — Unfilled placeholders stay in the HTML.
-- **`layout/dev-reload`** — In development, `<!-- {{scripts}} -->` also gets the live reload script, after the page's `index.js` (see `dev-server/reload`). A layout file without `<!-- {{scripts}} -->` has nowhere to put it, so its pages don't live reload.
-
-## Errors
-
-- **`layout/error-missing`** — A page whose layout has no layout file fails with 500 (see `page/error-checks`).
 
 ## TODO
 
-- **`layout/files`** — Go through the names of the files unbundle reads from a layout's and a page's folder (`layout.html`, `metadata.ts`, `styles.css`, `sync.ts`, `global.ts`, `index.ts`) and pick the clearest name for each, for example `layout.css` rather than `styles.css` in a layout, or decide that the folder name already says enough.
-- **`layout/placeholder-form`** — Write `{{title}}` as a comment like the others.
-- **`layout/placeholder-first-only`** — Fill every occurrence of a placeholder, not just the first.
-- **`layout/placeholder-order`** — Only fill placeholders written in the layout file, never ones that appear inside a filled value.
-- **`layout/placeholder-dollar`** — Insert values literally, by passing a function to `replace` instead of a string.
+- **`layout/folder/files`** — Go through the names of the files unbundle reads from a layout's and a page's folder (`layout.html`, `metadata.ts`, `styles.css`, `sync.ts`, `global.ts`, `index.ts`) and pick the clearest name for each, for example `layout.css` rather than `styles.css` in a layout, or decide that the folder name already says enough.
 - **`layout/pick`** — Check that `config.layout` is a layout's name, and allow only safe characters in layout names.
-- **`layout/format`** — Format the HTML with the site's Prettier config when it has one, like transpiled files (see `build/format`).
+- **`layout/placeholders/form`** — Write `{{title}}` as a comment like the others.
+- **`layout/placeholders/first-only`** — Fill every occurrence of a placeholder, not just the first.
+- **`layout/placeholders/order`** — Only fill placeholders written in the layout file, never ones that appear inside a filled value.
+- **`layout/placeholders/dollar`** — Insert values literally, by passing a function to `replace` instead of a string.
+- **`layout/format`** — Format the HTML with the site's Prettier config when it has one, like transpiled files (see `staging/format`).
