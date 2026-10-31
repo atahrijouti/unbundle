@@ -19,4 +19,5 @@
 
 ## TODO
 
-- **`static/error-missing`** — Don't fail when the static folder doesn't exist.
+- **`static/error-missing`** — Don't fail when the static folder doesn't exist. A site with no static files, or one that keeps an empty `public/` out of git, should still build.
+- **`static/dev-watch`** — Consider watching the static folder too, so changes in it trigger live reload.

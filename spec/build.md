@@ -8,10 +8,10 @@
 ## Output
 
 - **`build/out-reset`** — The output folder is emptied first.
-- **`build/staging`** — The source folder is turned into the staging folder, which isn't emptied first: files from earlier runs, the dev server's included, stay and reach the output folder.
+- **`build/staging`** — The build first fills the staging folder (`dist/`) from the source folder: transpiled and copied files wait there before they're written to the output folder. The staging folder isn't emptied first: files from earlier runs, the dev server's included, stay and reach the output folder.
 - **`build/ships-all`** — Every file in the source folder reaches the staging folder, keeping its path, including files only used at build time such as layout files and metadata. Empty folders don't.
-- **`build/copy`** — Files other than `.ts` are copied unchanged, `.tsx`, `.mts` and `.cts` included. Copying happens before transpiling.
-- **`build/transpile`** — Each `.ts` file becomes a `.js` file next to where it was, one to one: types removed, never bundled or minified. The site's `tsconfig.json` is read as esbuild normally reads it. A `.d.ts` file becomes an empty `.d.js`.
+- **`build/copy`** — Files other than `.ts` are copied unchanged. Copying happens before transpiling.
+- **`build/transpile`** — Each `.ts` file becomes a `.js` file next to where it was, one to one: types removed, never bundled or minified. Only `.ts` files are transpiled; `.tsx`, `.mts` and `.cts` files are copied as they are. The site's `tsconfig.json` is read as esbuild normally reads it. A `.d.ts` file becomes an empty `.d.js`.
 - **`build/ts-imports`** — In each transpiled file, `.ts` becomes `.js` wherever the text `from "<path>.ts"` (or with single quotes) appears and the path starts with `.`. It's a text replacement over the whole file, so matching text in strings, and in the comments the transpiled file keeps, changes too. Side-effect imports (`import "./x.ts"`), `import()`, and paths with a query (`./x.ts?v=1`) keep `.ts`.
 - **`build/format`** — Transpiled files are formatted with the site's Prettier config, as found from the file's path in the staging folder; a `parser` set there wins. Copied files aren't formatted.
 - **`build/write`** — The static folder, then the staging folder, then each page's HTML are written to the output folder; a later file wins over an earlier one with the same name.
@@ -19,7 +19,7 @@
 
 ## Development
 
-- **`build/dev`** — The dev server fills the staging folder the same way (see `dev-server/staging`), and writes nothing to the output folder.
+The dev server fills the staging folder the same way and writes nothing to the output folder (see `dev-server/staging`).
 
 ## Errors
 
@@ -29,7 +29,8 @@
 
 ## TODO
 
-- **`build/html`** — Don't write pages that fail. Skip them, build the rest, then exit non-zero.
+- **`build/html`** — Don't write pages that fail. Skip them, build the rest, report each failed page and why, then exit non-zero.
+- **`build/ships-all`** — Consider leaving files only used at build time out of the site, or a config entry with glob patterns for files to leave out.
 - **`build/exit`** — Exit non-zero on any error.
 - **`build/staging`** — Empty the staging folder before a build, so stale files don't ship.
 - **`build/staging`** — Consider renaming `dist/` to a name that says unbundle generates it and authors don't edit it.

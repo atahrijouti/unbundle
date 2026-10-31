@@ -2,9 +2,9 @@
 
 ## Source
 
-- **`scripts/sync`** — A layout and a page can each have a `sync.ts`, their sync script.
+- **`scripts/sync`** — A layout and a page can each have an optional `sync.ts`: their sync script.
 - **`scripts/sync-classic`** — A sync script runs as a classic script. Nothing checks it for `import` or `export`: exports, and imports whose names are used, stay in the output and fail in the browser. `import type`, and an import whose names aren't used, disappear when transpiled.
-- **`scripts/global`** — A layout can have a `global.ts`, its global script.
+- **`scripts/global`** — A layout can have an optional `global.ts`: its global script.
 
 ## Output
 

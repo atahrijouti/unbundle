@@ -2,7 +2,8 @@
 
 ## Source
 
-- **`page/folder`** — A page is a folder directly inside `<source folder>/app/`, named after its folder. Files there are ignored; hidden and symlinked folders count. Folders inside a page's folder belong to the page; they aren't pages.
+- **`page/folder`** — A page is a folder directly inside `<source folder>/app/`, named after its folder. Folders inside a page's folder belong to the page; they aren't pages.
+- **`page/listing`** — Pages are found by listing `<source folder>/app/`: every folder there is a page, hidden and symlinked ones included. Files directly in `app/` are ignored.
 - **`page/module`** — The folder's `index.ts` is the page's module. It runs at build time and again in the browser, so its top-level code and `content()` can't use browser-only APIs such as `document`, `textToHTML` included (see `package/text-to-html`).
 - **`page/node`** — Node imports the site's TypeScript at build time, using its built-in type stripping (Node 22.18 or 23.6 and later). That TypeScript can't use enums, namespaces or parameter properties, and its relative imports must end in `.ts`; the browser copy accepts more, so a file can work in the browser and still fail at build time.
 - **`page/exports`** — The module exports:
@@ -22,9 +23,10 @@
 - **`page/name`** — Any other page becomes `<name>.html`. `/<name>` without `.html` only works if the host resolves it; GitHub Pages does.
 - **`page/index-clash`** — A page named `index` also becomes `index.html`. With both `home` and `index`, the last one written wins, in the order the folders are listed.
 - **`page/404`** — A page named `404` becomes `404.html`, which GitHub Pages serves for unknown URLs. Nothing else is special about it.
-- **`page/html`** — The page's HTML is its layout file filled with the page (see [Layout](layout.md)). `content()` is called once, with no arguments, and not awaited: an `async` one inserts the text `[object Promise]`.
-- **`page/script`** — The page's module is loaded as a module script from `<base URL>app/<page>/index.js`, and its `styles.css`, if any, from `<base URL>app/<page>/styles.css`.
-- **`page/ready`** — If the module's source contains the text `export const ready`, the page's script gets `document.addEventListener("DOMContentLoaded", ready)` after its code, before its exports. It's a text match: `export function ready` and `export { ready }` aren't detected, while `export const readyCount`, or the text in a comment, is, and the script then throws as soon as it loads, since that `ready` doesn't exist. Only a page's own `index.ts` is checked, and only when its path ends in `src/app/<page>/index.ts` (see `config/keys`).
+- **`page/html`** — The page's HTML is its layout file, with each placeholder replaced by the matching piece of the page: its title, metadata, styles, scripts and `content()` (see [Layout](layout.md)). `content()` is called once, with no arguments, and isn't awaited.
+- **`page/script`** — The page's module is loaded as a module script from `<base URL>app/<page>/index.js`.
+- **`page/styles`** — The page's `styles.css`, if it has one, is linked from `<base URL>app/<page>/styles.css`, after the layout's (see `layout/styles`).
+- **`page/ready`** — If the module's source contains the text `export const ready`, unbundle appends `document.addEventListener("DOMContentLoaded", ready)` to the page's `index.js`, after its code and before its exports, so the site ships a modified copy of the module. It's a text match: `export function ready` and `export { ready }` aren't detected, while `export const readyCount`, or the text in a comment, is, and the script then throws as soon as it loads, since that `ready` doesn't exist. Only a page's own `index.ts` is checked, and only when its path ends in `src/app/<page>/index.ts` (see `config/keys`).
 
 ## Development
 
@@ -52,7 +54,7 @@
 - **`page/index-clash`** — Reject a page named `index`, or resolve the clash with `home`.
 - **`page/ready`** — Detect a `ready` export properly instead of matching text. Keep adding the listener to the page's script, so it stays visible there.
 - **`page/error-checks`** — A missing `content` export is 500, like the other checks.
-- **`page/error-page`** — Live reload only in development. Escape the message.
-- **`page/error-uncaught`** — Every error while producing a page becomes a 500 error page.
+- **`page/error-page`** — Live reload only in development. Escape the message. Only the dev server shows error pages; the build reports a failing page on the command line and writes no HTML for it (see `build/html`).
+- **`page/error-uncaught`** — In the dev server, every error while producing a page becomes a 500 error page, and the dev server keeps running. In the build, it's reported on the command line, and no HTML is written for that page.
 - **`page/dev-url`** — Decode percent-encoded paths, and accept `/<name>/`.
 - **`page/dev-fresh`** — Also reload the modules the page's module and the metadata files import.

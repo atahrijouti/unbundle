@@ -3,7 +3,7 @@
 ## Source
 
 - **`layout/folder`** — A layout is a folder in `src/layouts/`, named after its folder. Its `layout.html` is the layout file, and is required.
-- **`layout/files`** — Optional `metadata.ts` (see [Metadata](metadata.md)), `styles.css`, and `sync.ts` and `global.ts` (see [Scripts](scripts.md)). Other files reach the site like the rest of the source folder; unbundle doesn't read them.
+- **`layout/files`** — A layout's folder can also hold an optional `metadata.ts` (see [Metadata](metadata.md)), `styles.css`, `sync.ts` and `global.ts` (see [Scripts](scripts.md)). Other files in the layout's folder reach the site like the rest of the source folder; unbundle doesn't read them.
 - **`layout/pick`** — A page uses the layout named in its `config.layout`, or `main` when that's `undefined` or `null`. The name isn't checked: it's used as part of a path, so `""` points at `src/layouts/` itself and `../x` works.
 - **`layout/placeholders`** — The layout file can contain these placeholders:
 
@@ -16,7 +16,7 @@
   | `<!-- {{metadata}} -->` | The page's metadata tags |
   | `<!-- {{content}} -->` | The page's `content()` |
 
-- **`layout/placeholder-form`** — `{{title}}` is written bare. Every other placeholder is an HTML comment written exactly `<!-- {{name}} -->`, one space on each side: `<!--{{styles}}-->` isn't filled.
+- **`layout/placeholder-form`** — `{{title}}` is written bare. Every other placeholder is an HTML comment written exactly `<!-- {{name}} -->`, with one space on each side; written any other way, it isn't filled.
 - **`layout/production-only`** — A production-only block runs from `<!-- {{production-only:start}} -->` to the next `<!-- {{production-only:end}} -->`, written exactly so. Blocks don't nest.
 
 ## Output
@@ -35,7 +35,7 @@
 
 - **`layout/dev-production-blocks`** — Production-only blocks are removed, markers and content. Placeholders inside them are filled first, then removed with them.
 - **`layout/dev-placeholders`** — Unfilled placeholders stay in the HTML.
-- **`layout/dev-reload`** — `<!-- {{scripts}} -->` also gets live reload (see `dev-server/reload`). A layout file without it gets no live reload.
+- **`layout/dev-reload`** — In development, `<!-- {{scripts}} -->` also gets the live reload script, after the page's script (see `dev-server/reload`). A layout file without `<!-- {{scripts}} -->` has nowhere to put it, so its pages don't live reload.
 
 ## Errors
 
@@ -45,5 +45,7 @@
 
 - **`layout/placeholder-form`** — Write `{{title}}` as a comment like the others.
 - **`layout/placeholder-first-only`** — Fill every occurrence of a placeholder, not just the first.
+- **`layout/placeholder-order`** — Only fill placeholders written in the layout file, never ones that appear inside a filled value.
 - **`layout/placeholder-dollar`** — Insert values literally.
-- **`layout/pick`** — Check that `config.layout` is a layout's name.
+- **`layout/pick`** — Check that `config.layout` is a layout's name, and allow only safe characters in layout names.
+- **`layout/format`** — Format the HTML with the site's Prettier config when it has one, like transpiled files (see `build/format`).

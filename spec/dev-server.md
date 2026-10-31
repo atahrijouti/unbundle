@@ -47,6 +47,8 @@ Not applicable: the dev server is development.
 
 ## TODO
 
+- **`dev-server/watch`** — Ignore the temporary files other popular editors write while saving, not only Helix's `.bck`.
+- **`dev-server/mime`** — Cover file types as exhaustively as practical, `.webmanifest` and `.map` included.
 - **`dev-server/serve`** — Serve the `404` page with status 404 when one exists, instead of `404 :-/`. `/404` should also return 404, like GitHub Pages.
 - **`dev-server/watch-deletes`** — Remove a file from the staging folder when it's deleted from the source folder.
 - **`dev-server/crash`** — Catch errors while answering a request and return a 500 page instead of stopping.
