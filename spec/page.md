@@ -41,14 +41,3 @@
 ## HTML
 
 - **`page/html`** — The page's HTML is its layout file, with each placeholder replaced by the matching piece of the page: its title, metadata, styles, scripts and content (see `layout/placeholders/list`).
-
-## TODO
-
-- **`page/folder/location`** — Research producing several pages from one page, for blogs and other lists. Astro does it with `[slug].astro` files exporting `getStaticPaths()`, run at build time, returning one `{ params, props }` per page.
-- **`page/module/runs-twice`** — Export helpers that tell build time from the browser, such as `isBrowser`, so a page module can guard browser-only code without `typeof document` checks.
-- **`page/module/node`** — Research how to deal with the gap between what Node accepts at build time and what the browser copy accepts, so a page doesn't work in one and fail in the other.
-- **`page/module/ready`** — Detect a `ready` export properly instead of matching text. Keep adding the listener to the page's `index.js`, so it stays visible there.
-- **`page/module/fresh`** — Also reload the modules the page's module and the metadata files import.
-- **`page/url/name`** — Add a config option to write `<name>/index.html` instead of `<name>.html`, like Astro's `build.format`; the dev server accepts the matching URLs.
-- **`page/url/index-clash`** — Reject a page named `index`, or resolve the clash with `home`.
-- **`page/url/dev-server`** — Decode percent-encoded paths, and accept `/<name>/`.

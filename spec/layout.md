@@ -47,13 +47,3 @@
 ## Formatting
 
 - **`layout/format`** — The finished HTML is formatted with Prettier's default settings, so it reads well in View Source. The site's Prettier config isn't used.
-
-## TODO
-
-- **`layout/folder/files`** — Go through the names of the files unbundle reads from a layout's and a page's folder (`layout.html`, `metadata.ts`, `styles.css`, `sync.ts`, `global.ts`, `index.ts`) and pick the clearest name for each, for example `layout.css` rather than `styles.css` in a layout, or decide that the folder name already says enough.
-- **`layout/pick`** — Check that `config.layout` is a layout's name, and allow only safe characters in layout names.
-- **`layout/placeholders/form`** — Write `{{title}}` as a comment like the others.
-- **`layout/placeholders/first-only`** — Fill every occurrence of a placeholder, not just the first.
-- **`layout/placeholders/order`** — Only fill placeholders written in the layout file, never ones that appear inside a filled value.
-- **`layout/placeholders/dollar`** — Insert values literally, by passing a function to `replace` instead of a string.
-- **`layout/format`** — Format the HTML with the site's Prettier config when it has one, like transpiled files (see `staging/format`).

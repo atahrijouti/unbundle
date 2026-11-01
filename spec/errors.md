@@ -44,15 +44,3 @@ What happens when something fails, in the build and in the dev server.
 ## Dev server crash
 
 - **`errors/dev-server/crash`** — An unchecked error while producing a page (see `errors/page/unchecked`), or a missing `app/` folder, stops the dev server. So does failing to empty the staging folder, or a missing source folder, at start. Open pages then reload once and show the browser's error page (see `dev-server/reload/reconnect`).
-
-## TODO
-
-- **`errors/page/checks`** — A missing `content` export is 500, like the other checks.
-- **`errors/page/error-page`** — Live reload only in development. Escape the message.
-- **`errors/page/error-page`** — Only the dev server shows error pages. The build doesn't write pages that fail: it skips them, builds the rest, reports on the command line each failed page and why, then exits non-zero.
-- **`errors/page/unchecked`** — In the dev server, every error while producing a page becomes a 500 error page, and the dev server keeps running. In the build, it's reported on the command line, and no HTML is written for that page.
-- **`errors/staging/dev-server`** — Show errors from filling the staging folder in the browser too, on the page being viewed, not only in the log.
-- **`errors/staging/sync`** — Don't reload after a failed sync.
-- **`errors/static`** — Don't fail when the static folder doesn't exist. A site with no static files, or one that keeps an empty `public/` out of git, should still build.
-- **`errors/build/exit`** — Exit non-zero on any error.
-- **`errors/dev-server/crash`** — Catch errors while answering a request and return a 500 page instead of stopping.

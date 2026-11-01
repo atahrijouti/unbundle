@@ -33,8 +33,3 @@
   | Unfilled placeholders kept (`layout/placeholders/unfilled`) | yes | no | no |
 
   Error pages include live reload in every mode (see `errors/page/error-page`).
-
-## TODO
-
-- **`config/file/keys`** — Use every key everywhere it applies, so the config overrides everything, and make `NODE_MODULES_FOLDER` mean something or remove it.
-- **`config/base-url`** — Treat a `BASE_URL` of `null` or `undefined` as not set, so it defaults to `/`, and reject any other value that isn't a string with a clear message.

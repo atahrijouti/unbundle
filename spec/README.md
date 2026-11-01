@@ -1,10 +1,10 @@
 # Spec
 
-What unbundle does today, one topic per file. It is a one-to-one record of the code: when they disagree, one of them has a bug. Terms are defined in [`CONTEXT.md`](../CONTEXT.md); history and reasoning live in [`changes/`](../changes/).
+What unbundle does today, one topic per file. It is a one-to-one record of the code: when they disagree, one of them has a bug. Planned changes live in [`TODO.md`](../TODO.md). Terms are defined in [`CONTEXT.md`](../CONTEXT.md); history and reasoning live in [`changes/`](../changes/).
 
 ## How a spec file is written
 
-Each file covers one topic, split into concepts, one `##` heading each, and ends with a `## TODO` section. Within a concept, rules follow the order you'd think about it:
+Each file covers one topic, split into concepts, one `##` heading each. Within a concept, rules follow the order you'd think about it:
 
 1. what the author writes, or what unbundle reads;
 2. what it becomes in the finished site;
@@ -20,10 +20,8 @@ Each rule:
 - has an ID, `<topic>/<concept>/<aspect>`, or `<topic>/<concept>` when the concept is a single rule, so tests and change records can point at it. IDs name what a rule is about, never which part of the list above it belongs to;
 - states one fact the author can observe: files, URLs, HTML, status codes, exit codes, logs;
 - names a code detail only when the exact text is what the author depends on;
-- is either wanted as it is, or has a TODO to change it. The rule always says what the code does today; only the TODO says what's wanted instead;
+- says what the code does today;
 - lives in one place. Other rules point to it rather than repeat it.
-
-A TODO names the rule it changes. Picking one up starts a change record; the change updates the rule, its TODO and the tests together.
 
 Both commands run from the site's root folder. Every path here is relative to it.
 
@@ -41,7 +39,3 @@ Both commands run from the site's root folder. Every path here is relative to it
 - [Dev server](dev-server.md)
 - [Errors](errors.md)
 - [Package](package.md)
-
-## TODO
-
-- Write tests from the spec. Explore how thoroughly once the spec has settled and been merged.

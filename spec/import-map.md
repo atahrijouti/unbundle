@@ -14,8 +14,3 @@
 
 - **`import-map/node-modules/copy`** — Each path starting with `./node_modules/` is copied into the site, keeping its path. A file is copied alone, without what it imports from the rest of its package. A folder is copied whole. A path that doesn't exist is skipped silently. Other paths, such as URLs, aren't copied.
 - **`import-map/node-modules/dev-server`** — In the dev server, changing the import map copies its `node_modules` paths again.
-
-## TODO
-
-- **`import-map/file/format`** — Use the browser's standard import map format, `{ "imports": { … } }`, so maps can be copied as they are and can use `scopes` and `integrity`.
-- **`import-map/node-modules/copy`** — Research a better way to bring `node_modules` dependencies into the site, so a file arrives with what it imports from its package.

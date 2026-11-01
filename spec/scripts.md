@@ -20,7 +20,3 @@
 ## Global script
 
 - **`scripts/global`** — A layout can have an optional `global.ts`. It becomes `global.js`, loaded as a module script from `<base URL>layouts/<name>/global.js` on every page using that layout, before the page's `index.js`.
-
-## TODO
-
-None.
