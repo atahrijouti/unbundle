@@ -15,6 +15,8 @@ export let CONFIG = {
   DIST_FOLDER,
   PUBLIC_FOLDER,
   NODE_MODULES_FOLDER,
+  PORT: 3000,
+  HOST: undefined as string | undefined,
 }
 
 export type UNBUNDLE_CONFIG = typeof CONFIG

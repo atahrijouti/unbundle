@@ -8,20 +8,22 @@ import { html } from "../client/tags"
 import { CONFIG } from "./config"
 
 const HMR_STRING = `<script>
-  let ws = new WebSocket("ws://localhost:3000");
-  ws.onmessage = function (event) {
-      if (event.data === "reload") {
-          console.log("File change detected, reloading page...");
-          window.location.reload();
-      }
-  };
-  ws.onerror = function (error) {
-      console.error("WebSocket error:", error);
-  };
-  ws.onclose = function () {
-      console.log("WebSocket connection closed");
-      setTimeout(()=>{ window.location.reload(); }, 1000)
-  };
+  {
+    const ws = new WebSocket(location.origin.replace(/^http/, "ws"));
+    ws.onmessage = function (event) {
+        if (event.data === "reload") {
+            console.log("File change detected, reloading page...");
+            window.location.reload();
+        }
+    };
+    ws.onerror = function (error) {
+        console.error("WebSocket error:", error);
+    };
+    ws.onclose = function () {
+        console.log("WebSocket connection closed");
+        setTimeout(()=>{ window.location.reload(); }, 1000)
+    };
+  }
   </script>`
 
 const assembleMetadata = (metadata: Metadata) => {

@@ -65,7 +65,7 @@ The path the site is served under, such as `/` or `/blog/`. Every URL unbundle w
 _Avoid_: base path, base, root
 
 **Config**:
-The site's optional `unbundle.config.js`, where the author changes the base URL and the folder names.
+The site's optional `unbundle.config.js`, where the author changes the base URL, the folder names, and the dev server's port and host.
 _Avoid_: settings, options
 
 ### Producing the site

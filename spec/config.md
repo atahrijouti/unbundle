@@ -13,6 +13,8 @@
   | `OUT_DIR` | `"out"` | Output folder | — |
   | `PUBLIC_FOLDER` | `"public"` | Static folder | The dev server, which always serves `./public` |
   | `NODE_MODULES_FOLDER` | `"node_modules"` | — | Anything useful: import map paths are always read from `./node_modules/`. The key only feeds a relative path, so other values can put the copies in the wrong place or make copying fail. |
+  | `PORT` | `3000` | The dev server's port (see `dev-server/port`) | — |
+  | `HOST` | `undefined`, every network interface | The dev server's host (see `dev-server/port`) | — |
 
 ## Base URL
 

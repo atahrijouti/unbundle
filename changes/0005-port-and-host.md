@@ -1,4 +1,4 @@
-# Port and host
+# 0005 — Port and host
 
 ## Why
 
@@ -9,9 +9,8 @@
 
 - Config keys `PORT`, default `3000`, and `HOST`, default every network interface. `PORT: 0` lets the operating system pick a free port.
 - When the port is taken, the dev server tries the next one up.
-- It prints the address it actually got: `Server running on http://<host>:<port>`.
+- It prints the address it actually got: `Server running on http://<host>:<port>`, with `localhost` when `HOST` isn't set.
 - Live reload connects to the address that served the page, and declares no global.
-- Needs [config-on-windows](config-on-windows.md), so the keys work on every platform.
 - Settles the TODOs on `dev-server/port` and `dev-server/reload/host`.
 
 ## Breaking changes

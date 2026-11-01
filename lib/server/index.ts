@@ -3,6 +3,7 @@
 import fs from "node:fs"
 import path from "node:path"
 import { createServer } from "node:http"
+import type { AddressInfo } from "node:net"
 import { WebSocketServer, type WebSocket } from "ws"
 
 import { assemblePage } from "./assemble-page"
@@ -137,6 +138,29 @@ const server = createServer(async (req, res) => {
   res.end("404 :-/")
 })
 
+const listen = (port: number): Promise<AddressInfo> => {
+  return new Promise((resolve, reject) => {
+    const onError = (err: NodeJS.ErrnoException) => {
+      server.off("listening", onListening)
+      if (err.code === "EADDRINUSE" && port !== 0 && port < 65535) {
+        resolve(listen(port + 1))
+      } else {
+        reject(err)
+      }
+    }
+    const onListening = () => {
+      server.off("error", onError)
+      resolve(server.address() as AddressInfo)
+    }
+    server.once("error", onError)
+    server.once("listening", onListening)
+    server.listen(port, CONFIG.HOST)
+  })
+}
+
+const { port } = await listen(CONFIG.PORT)
+
+// Attached once listening: the socket server rethrows the server's errors, ports already in use included
 const wss = new WebSocketServer({ server })
 wss.on("connection", (ws) => {
   sockets.add(ws)
@@ -145,6 +169,5 @@ wss.on("connection", (ws) => {
   })
 })
 
-server.listen(3000, () => {
-  console.log(`Server running on http://localhost:3000`)
-})
+const host = CONFIG.HOST ?? "localhost"
+console.log(`Server running on http://${host.includes(":") ? `[${host}]` : host}:${port}`)

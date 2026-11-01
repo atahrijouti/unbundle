@@ -3,7 +3,7 @@
 ## Command
 
 - **`dev-server/command`** — `unbundle-serve` reads the source folder, the static folder and the config, prints `unbundle v<version>`, and fills the staging folder (see `staging/dev-server`).
-- **`dev-server/port`** — It listens on port 3000, on every network interface. The port can't be changed.
+- **`dev-server/port`** — It listens on the config's `PORT` and `HOST`: port 3000 on every network interface by default. `PORT: 0` lets the operating system pick a free port. When the port is taken, it tries the next one up, until one is free. It then prints the address it got, `Server running on http://<host>:<port>`, with `localhost` when `HOST` isn't set and an IPv6 host in brackets. A port outside 0 to 65535, a host it can't listen on, or every port up to 65535 being taken stops the dev server with exit code 1.
 
 ## Serving
 
@@ -38,14 +38,12 @@
 - **`dev-server/reload/trigger`** — After each sync, every open page reloads, debounced to 750 ms. Any changed or new file in the source folder triggers it, layout files, metadata and the import map included. Deleting a file, creating a folder or writing a `.bck` file doesn't.
 - **`dev-server/reload/socket`** — Live reload uses a WebSocket on the dev server's port, accepted on any path.
 - **`dev-server/reload/reconnect`** — A page that loses its connection reloads once, a second later. While the dev server is down, that reload gets the browser's own error page, which has no live reload, so unbundle doesn't try again.
-- **`dev-server/reload/host`** — The page connects to `localhost:3000`, whichever host served it, and that address can't be changed. The script declares a global `ws`.
+- **`dev-server/reload/host`** — The page connects to the address that served it, `ws://` for `http://` and `wss://` for `https://`, so it works on any port and from other devices on the network. The script declares no global.
 
 ## TODO
 
-- **`dev-server/port`** — Make the dev server's port and host configurable, and when the port is taken, try the next one up.
 - **`dev-server/serve/order`** — Serve the `404` page with status 404 when one exists, instead of `404 :-/`. `/404` should also return 404, like GitHub Pages.
 - **`dev-server/serve/mime`** — Cover file types as exhaustively as practical, `.webmanifest` and `.map` included.
 - **`dev-server/serve/base-url`** — Serve the site under its base URL.
 - **`dev-server/watch`** — Ignore the temporary files other popular editors write while saving, not only Helix's `.bck`.
 - **`dev-server/reload/reconnect`** — Keep trying every second until the dev server is back, then reload, instead of reloading into the browser's error page.
-- **`dev-server/reload/host`** — Connect to the host that served the page, so pages opened from another device on the network work. Don't declare a global.
