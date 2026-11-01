@@ -20,6 +20,6 @@ Follow "Changing unbundle" in `CONTRIBUTING.md`. A change starts as a proposal. 
 
 - `mise.toml` sets the Node and pnpm versions; `mise install` installs them.
 - `pnpm install`, then `pnpm build`, writes `dist/`.
-- `pnpm typecheck` and `pnpm lint` check the code; `pnpm format` formats it with the repo's Prettier config.
+- After any change, run `pnpm format`, then `pnpm check`, which checks formatting, types and lint without changing anything. It must pass; CI runs it on every pull request.
 - Check behavior on a throwaway site in a temp folder: run `node <repo>/dist/server/build.js` or `node <repo>/dist/server/index.js` from the site's root. Give its `unbundle.config.js` `PORT: 0`, so the dev server never clashes with one already running.
 - There are no tests yet (see `TODO.md`).

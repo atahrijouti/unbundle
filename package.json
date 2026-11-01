@@ -8,7 +8,8 @@
     "build": "node build.js",
     "typecheck": "tsc",
     "lint": "eslint",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "check": "prettier --check . && tsc && eslint"
   },
   "bin": {
     "unbundle-serve": "./dist/server/index.js",
