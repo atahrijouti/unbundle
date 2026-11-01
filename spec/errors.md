@@ -12,6 +12,7 @@ What happens when something fails, in the build and in the dev server.
   5. The layout's `metadata.ts` fails to load, or a `sync.ts` fails to compile: 500, with esbuild's message for a `sync.ts`.
 
   In the build, a `sync.ts` that doesn't compile never gets this far: it fails while filling the staging folder (see `errors/staging/build`).
+
 - **`errors/page/error-page`** — A failed check gives `<title><page> - <status></title><p><message></p>` instead of the layout, unformatted, and logs the message. The message is raw HTML; for checks 1 to 4 it includes an absolute file path. The page includes live reload, in production too. The dev server sends it with the check's status; the build writes it as the page's HTML and carries on (see `build/html`).
 
 ## Unchecked page errors

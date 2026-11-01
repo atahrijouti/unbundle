@@ -11,22 +11,23 @@
 - **`dev-server/serve/requests`** — Every HTTP method is answered the same way, and the query string is ignored. Paths aren't percent-decoded, for pages or files: `/a%20b.txt` doesn't find `a b.txt`. A page is sent as `text/html` with its status.
 - **`dev-server/serve/mime`** — Files get a content type from their lowercased extension, with no charset:
 
-  | Extension | Content type |
-  |---|---|
-  | `.html` | `text/html` |
-  | `.js` | `text/javascript` |
-  | `.css` | `text/css` |
-  | `.json` | `application/json` |
-  | `.png` | `image/png` |
-  | `.jpg`, `.jpeg` | `image/jpeg` |
-  | `.gif` | `image/gif` |
-  | `.svg` | `image/svg+xml` |
-  | `.ico` | `image/x-icon` |
-  | `.woff` | `font/woff` |
-  | `.woff2` | `font/woff2` |
-  | `.webp` | `image/webp` |
+  | Extension       | Content type       |
+  | --------------- | ------------------ |
+  | `.html`         | `text/html`        |
+  | `.js`           | `text/javascript`  |
+  | `.css`          | `text/css`         |
+  | `.json`         | `application/json` |
+  | `.png`          | `image/png`        |
+  | `.jpg`, `.jpeg` | `image/jpeg`       |
+  | `.gif`          | `image/gif`        |
+  | `.svg`          | `image/svg+xml`    |
+  | `.ico`          | `image/x-icon`     |
+  | `.woff`         | `font/woff`        |
+  | `.woff2`        | `font/woff2`       |
+  | `.webp`         | `image/webp`       |
 
   Anything else, `.webmanifest` and `.map` included, is `application/octet-stream`.
+
 - **`dev-server/serve/base-url`** — The base URL is ignored. With a base URL other than `/`, pages ask for their scripts and styles under it, and get 404.
 
 ## Watching

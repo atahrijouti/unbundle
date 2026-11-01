@@ -4,11 +4,11 @@
 
 - **`metadata/levels`** — Metadata is declared at three levels:
 
-  | Level | Where | Exports |
-  |---|---|---|
-  | Site | `src/metadata.ts`, required | `metadata: Metadata` |
+  | Level  | Where                                      | Exports                       |
+  | ------ | ------------------------------------------ | ----------------------------- |
+  | Site   | `src/metadata.ts`, required                | `metadata: Metadata`          |
   | Layout | `src/layouts/<name>/metadata.ts`, optional | `metadata: Partial<Metadata>` |
-  | Page | the page's module, optional | `metadata: Partial<Metadata>` |
+  | Page   | the page's module, optional                | `metadata: Partial<Metadata>` |
 
 - **`metadata/export`** — Metadata comes only from each level's `metadata` export. A layout's `metadata.ts` that loads but has no `export const metadata` is ignored, without a warning.
 - **`metadata/keys`** — The keys:
@@ -36,13 +36,13 @@
 
 - **`metadata/tags/keys`** — `<!-- {{metadata}} -->` gets one tag per entry whose value isn't falsy. Entries with other keys render nothing:
 
-  | Key | Tag |
-  |---|---|
-  | `description` | `<meta name="description" content="…" />` |
-  | `theme-color` | `<meta name="theme-color" content="…" />` |
-  | `color-scheme` | `<meta name="color-scheme" content="…" />` |
-  | `manifest` | `<link rel="manifest" href="…" />` |
-  | `icon` | `<link rel="icon" href="…" type="image/png" />` |
+  | Key            | Tag                                             |
+  | -------------- | ----------------------------------------------- |
+  | `description`  | `<meta name="description" content="…" />`       |
+  | `theme-color`  | `<meta name="theme-color" content="…" />`       |
+  | `color-scheme` | `<meta name="color-scheme" content="…" />`      |
+  | `manifest`     | `<link rel="manifest" href="…" />`              |
+  | `icon`         | `<link rel="icon" href="…" type="image/png" />` |
 
 - **`metadata/tags/types`** — `description`, `theme-color` and `color-scheme` are expected to be strings. Falsy values such as `0` or `false` are skipped, like `""`; any other value that isn't a string, such as a number or an object, is an unchecked error (see `errors/page/unchecked`). `manifest` and `icon` are written as text, whatever their type.
 - **`metadata/tags/order`** — Tags come out in the order their keys first appear: the site's keys in the order the site wrote them, then keys only the layout adds, then keys only the page adds. A layout or page that overrides a key changes its value, not its position.

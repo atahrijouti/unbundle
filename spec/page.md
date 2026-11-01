@@ -6,12 +6,12 @@
 - **`page/folder/listing`** — Pages are found by listing `<source folder>/app/`: every folder there is a page, hidden and symlinked ones included, and files directly in `app/` are ignored. The build lists them once, when it starts. The dev server lists them again on every request, so a new page shows up without a restart.
 - **`page/folder/files`** — What unbundle does with the files in a page's folder:
 
-  | File | | What happens to it |
-  |---|---|---|
-  | `index.ts` | required | The page's module (see Module). Loaded as a module script from `<base URL>app/<page>/index.js`. |
-  | `styles.css` | optional | Linked from `<base URL>app/<page>/styles.css`, after the layout's (see `layout/placeholders/list`). |
-  | `sync.ts` | optional | Pasted into the page's HTML (see `scripts/sync/inline`). |
-  | anything else | | Reaches the site like the rest of the source folder (see `staging/ships-all`). |
+  | File          |          | What happens to it                                                                                  |
+  | ------------- | -------- | --------------------------------------------------------------------------------------------------- |
+  | `index.ts`    | required | The page's module (see Module). Loaded as a module script from `<base URL>app/<page>/index.js`.     |
+  | `styles.css`  | optional | Linked from `<base URL>app/<page>/styles.css`, after the layout's (see `layout/placeholders/list`). |
+  | `sync.ts`     | optional | Pasted into the page's HTML (see `scripts/sync/inline`).                                            |
+  | anything else |          | Reaches the site like the rest of the source folder (see `staging/ships-all`).                      |
 
 ## Module
 
@@ -20,10 +20,10 @@
 - **`page/module/exports`** — The module exports:
 
   ```ts
-  export const content: () => string         // required
-  export const metadata: Partial<Metadata>   // optional, see Metadata
-  export const config: { layout?: string }   // optional, see Layout
-  export const ready: () => void             // optional
+  export const content: () => string // required
+  export const metadata: Partial<Metadata> // optional, see Metadata
+  export const config: { layout?: string } // optional, see Layout
+  export const ready: () => void // optional
   ```
 
 - **`page/module/content`** — `content()` is called once each time the page is produced, with no arguments, and isn't awaited. What it returns fills `<!-- {{content}} -->`.

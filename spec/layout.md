@@ -5,14 +5,14 @@
 - **`layout/folder/location`** — A layout is a folder in `src/layouts/`, named after its folder. Its files are at `<base URL>layouts/<name>/`.
 - **`layout/folder/files`** — What unbundle does with the files in a layout's folder:
 
-  | File | | What happens to it |
-  |---|---|---|
-  | `layout.html` | required | The layout file (see Placeholders). |
-  | `metadata.ts` | optional | The layout's metadata (see `metadata/levels`). |
-  | `styles.css` | optional | Linked before the page's (see `layout/placeholders/list`). |
-  | `sync.ts` | optional | Pasted into the page's HTML (see `scripts/sync/inline`). |
-  | `global.ts` | optional | Loaded on every page using the layout (see `scripts/global`). |
-  | anything else | | Reaches the site like the rest of the source folder; unbundle doesn't read it. |
+  | File          |          | What happens to it                                                             |
+  | ------------- | -------- | ------------------------------------------------------------------------------ |
+  | `layout.html` | required | The layout file (see Placeholders).                                            |
+  | `metadata.ts` | optional | The layout's metadata (see `metadata/levels`).                                 |
+  | `styles.css`  | optional | Linked before the page's (see `layout/placeholders/list`).                     |
+  | `sync.ts`     | optional | Pasted into the page's HTML (see `scripts/sync/inline`).                       |
+  | `global.ts`   | optional | Loaded on every page using the layout (see `scripts/global`).                  |
+  | anything else |          | Reaches the site like the rest of the source folder; unbundle doesn't read it. |
 
 ## Pick
 
@@ -22,14 +22,14 @@
 
 - **`layout/placeholders/list`** — The layout file can contain these placeholders, filled in this order:
 
-  | Placeholder | Filled with |
-  |---|---|
-  | `{{title}}` | The page's title (see `metadata/title`). |
-  | `<!-- {{sync-scripts}} -->` | The layout's `sync.ts`, then the page's (see `scripts/sync/inline`). |
-  | `<!-- {{styles}} -->` | A `<link rel="stylesheet">` for the layout's `styles.css`, then the page's, for each that exists. |
-  | `<!-- {{scripts}} -->` | In order: the import map, if there is one (see `import-map/tag`); the layout's `global.js`, if it has a `global.ts`; the page's `index.js`; in development, the live reload script (see `dev-server/reload/trigger`). |
-  | `<!-- {{metadata}} -->` | The page's metadata tags (see `metadata/tags/keys`). |
-  | `<!-- {{content}} -->` | What `content()` returns (see `page/module/content`). |
+  | Placeholder                 | Filled with                                                                                                                                                                                                           |
+  | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `{{title}}`                 | The page's title (see `metadata/title`).                                                                                                                                                                              |
+  | `<!-- {{sync-scripts}} -->` | The layout's `sync.ts`, then the page's (see `scripts/sync/inline`).                                                                                                                                                  |
+  | `<!-- {{styles}} -->`       | A `<link rel="stylesheet">` for the layout's `styles.css`, then the page's, for each that exists.                                                                                                                     |
+  | `<!-- {{scripts}} -->`      | In order: the import map, if there is one (see `import-map/tag`); the layout's `global.js`, if it has a `global.ts`; the page's `index.js`; in development, the live reload script (see `dev-server/reload/trigger`). |
+  | `<!-- {{metadata}} -->`     | The page's metadata tags (see `metadata/tags/keys`).                                                                                                                                                                  |
+  | `<!-- {{content}} -->`      | What `content()` returns (see `page/module/content`).                                                                                                                                                                 |
 
 - **`layout/placeholders/form`** — `{{title}}` is written bare. Every other placeholder is an HTML comment written exactly `<!-- {{name}} -->`, with one space on each side; written any other way, it isn't filled.
 - **`layout/placeholders/missing`** — A placeholder the layout file leaves out is skipped, so what it would have brought doesn't reach the page: a layout file without `<!-- {{scripts}} -->` gets no import map, no scripts and no live reload. Every value except a function title (see `metadata/title`) is still produced, so its errors still happen: `content()` runs even without `<!-- {{content}} -->`.

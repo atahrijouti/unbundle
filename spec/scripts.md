@@ -4,13 +4,13 @@
 
 - **`scripts/kinds`** — There are two kinds of script besides the page's own `index.ts`:
 
-  | | Sync script (`sync.ts`) | Global script (`global.ts`) |
-  |---|---|---|
-  | Who can have one | a layout and a page | a layout only |
-  | How it reaches the page | its code is pasted inline at `<!-- {{sync-scripts}} -->` | `global.js` is linked at `<!-- {{scripts}} -->` |
-  | When it runs | as soon as the browser reaches it, before first paint | after the HTML is parsed, as a module |
-  | Can it import | no | yes |
-  | Typical use | what's needed before first paint, such as setting the theme | code every page of the layout shares |
+  |                         | Sync script (`sync.ts`)                                     | Global script (`global.ts`)                     |
+  | ----------------------- | ----------------------------------------------------------- | ----------------------------------------------- |
+  | Who can have one        | a layout and a page                                         | a layout only                                   |
+  | How it reaches the page | its code is pasted inline at `<!-- {{sync-scripts}} -->`    | `global.js` is linked at `<!-- {{scripts}} -->` |
+  | When it runs            | as soon as the browser reaches it, before first paint       | after the HTML is parsed, as a module           |
+  | Can it import           | no                                                          | yes                                             |
+  | Typical use             | what's needed before first paint, such as setting the theme | code every page of the layout shares            |
 
 ## Sync scripts
 

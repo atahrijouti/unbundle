@@ -13,7 +13,7 @@ Each file covers one topic, split into concepts, one `##` heading each. Within a
 
 Only the parts that apply are written. When writing or reviewing a concept, ask all four questions, so a missing answer is a choice rather than an oversight.
 
-*Development* and *production* are modes, set by `NODE_ENV` (see `config/modes/effects`). A rule about the dev server says *the dev server*.
+_Development_ and _production_ are modes, set by `NODE_ENV` (see `config/modes/effects`). A rule about the dev server says _the dev server_.
 
 Each rule:
 

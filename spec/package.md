@@ -11,6 +11,7 @@
   ```
 
   What a site imports reaches the site through the import map like any other module (see `import-map/node-modules/copy`).
+
 - **`package/types`** — `Metadata`, `Module` and `Config` describe metadata and a page's module. `Module` has `content`, `metadata` and `config`, but no `ready` (see `page/module/exports`).
 
 ## Helpers
