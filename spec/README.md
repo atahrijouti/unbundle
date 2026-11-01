@@ -41,3 +41,7 @@ Both commands run from the site's root folder. Every path here is relative to it
 - [Dev server](dev-server.md)
 - [Errors](errors.md)
 - [Package](package.md)
+
+## TODO
+
+- Write tests from the spec. Explore how thoroughly once the spec has settled and been merged.
