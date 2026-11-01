@@ -107,7 +107,7 @@ const serveStaticFile = async (
 }
 
 const server = createServer(async (req, res) => {
-  const url = new URL(req.url ?? "/", `http://localhost:3000`)
+  const url = new URL(req.url ?? "/", "http://localhost")
   const pageName = url.pathname === "/" ? "home" : url.pathname.slice(1)
 
   const pages = new Set(getPages())
