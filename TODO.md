@@ -8,7 +8,11 @@ The backlog, in the order to work through it. Each group above "To decide" is on
 
 ## Tests from the spec
 
-- Write tests from the spec. Explore how thoroughly once the spec has settled and been merged.
+- Write tests from the spec. Explore how thoroughly first. Things known so far:
+  - `PORT: 0` lets each test run its own dev server (`dev-server/port`).
+  - The dev server logs nothing when a sync finishes or a reload is sent; syncs wait 50 ms and reloads 750 ms (`staging/dev-server`, `dev-server/reload/trigger`).
+  - Every rule was checked on Windows only. Symlinks and path separators may behave differently elsewhere.
+  - A few rules need a real browser or a second device (`dev-server/reload/reconnect`, `dev-server/reload/host`).
 
 ## Build failures
 
