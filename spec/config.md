@@ -2,7 +2,7 @@
 
 ## File
 
-- **`config/file/load`** — The config is the site's optional `./unbundle.config.js`; no other name or extension is looked up. Its default export, if it's an object, is merged over the defaults key by key; unknown keys are kept and unused. A default export that isn't an object is ignored. The config is read once, when a command starts: edits need a restart of the dev server. On Windows no config loads, even a valid one: importing it fails, and the command exits with code 1.
+- **`config/file/load`** — The config is the site's optional `./unbundle.config.js`; no other name or extension is looked up. Its default export, if it's an object, is merged over the defaults key by key; unknown keys are kept and unused. A default export that isn't an object is ignored. The config is read once, when a command starts: edits need a restart of the dev server.
 - **`config/file/keys`** — The keys, their defaults, and where each isn't used yet:
 
   | Key | Default | Means | Not used by |
@@ -34,6 +34,5 @@
 
 ## TODO
 
-- **`config/file/load`** — Load the config on Windows.
 - **`config/file/keys`** — Use every key everywhere it applies, so the config overrides everything, and make `NODE_MODULES_FOLDER` mean something or remove it.
 - **`config/base-url`** — Treat a `BASE_URL` of `null` or `undefined` as not set, so it defaults to `/`, and reject any other value that isn't a string with a clear message.

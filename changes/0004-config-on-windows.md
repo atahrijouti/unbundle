@@ -1,4 +1,4 @@
-# Config on Windows
+# 0004 — Config on Windows
 
 ## Why
 

@@ -1,5 +1,6 @@
 import path from "node:path"
 import fs from "node:fs"
+import { pathToFileURL } from "node:url"
 
 const SRC_FOLDER = "src"
 const OUT_DIR = "out"
@@ -21,7 +22,7 @@ export type UNBUNDLE_CONFIG = typeof CONFIG
 let appConfig = {}
 
 if (fs.existsSync("./unbundle.config.js")) {
-  appConfig = (await import(path.resolve("./unbundle.config.js"))).default
+  appConfig = (await import(pathToFileURL(path.resolve("./unbundle.config.js")).href)).default
 }
 
 if (appConfig != null && typeof appConfig === "object") {
