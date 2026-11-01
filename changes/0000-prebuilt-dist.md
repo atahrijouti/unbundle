@@ -1,7 +1,5 @@
 # 0000 — Prebuilt dist
 
-Status: accepted — release tags carry `dist/`
-
 ## Problem
 
 unbundle is installed from git and used to build its own `dist/` in a `postinstall` script. Both bins (`unbundle-serve`, `unbundle-build`) and the client export point into `dist/`, so if that script doesn't run, nothing works.
