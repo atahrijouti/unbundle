@@ -27,13 +27,6 @@ Ship `dist/` inside release tags, never on `main`, and drop `postinstall`.
 
 `dist/` stays in `.gitignore`; the release job adds it with `git add --force`.
 
-### Rejected
-
-- **Commit `dist/` on `main`, guarded by a pre-commit hook.** The hook has to be enabled on every clone, so a forgotten setup means a stale `dist/` and failing CI; and `dist/` adds noise to every diff.
-- **A bot PR that rebuilds `dist/` and bumps the version** (release-please / changesets). Needs Actions to open PRs, those PRs don't trigger other workflows, and `dist/` still lands on `main`. Worth it with changelogs or several contributors; a version-bump commit is the same gate here.
-- **Publish to npm.** Works (approval by name), but adds a registry account and publish step for a personal tool.
-- **Keep `postinstall`.** Re-approve the exact key on every bump.
-
 ## Developing against a local copy
 
 A site can point at a local checkout with `"unbundle": "link:../unbundle"`. Linked packages don't run install scripts, so rebuild by hand (`pnpm build`) after each change. `dist/` is git-ignored, so the local build never gets committed by accident.

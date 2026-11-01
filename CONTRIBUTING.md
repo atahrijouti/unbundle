@@ -23,6 +23,6 @@ Only one release runs at a time and none is cancelled. A newer push replaces a r
 
 ## Changing unbundle
 
-1. Write a change record in `changes/`: why, what changes, which rules in `spec/` it touches, what was rejected.
+1. Write a change record in `changes/`: why, what changes, which rules in `spec/` it touches, and any breaking changes.
 2. Once it's accepted, change `spec/`, the tests and the code together.
 3. Use the terms in `CONTEXT.md`.
