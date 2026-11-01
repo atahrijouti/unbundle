@@ -2,6 +2,10 @@
 
 The backlog, in the order to work through it. Each group above "To decide" is one change: write its proposal, then build it (see `CONTRIBUTING.md`). Items name the spec rule they change.
 
+## Sample site
+
+- Add a sample site to the repo that runs on this checkout's unbundle, so a change can be tried without bumping the version in another site.
+
 ## Tests from the spec
 
 - Write tests from the spec. Explore how thoroughly once the spec has settled and been merged.
