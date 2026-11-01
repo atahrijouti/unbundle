@@ -1,7 +1,5 @@
 # 0001 — Layout folders
 
-Status: accepted
-
 ## Why
 
 - A site should be able to have several layouts and let each page pick one.
