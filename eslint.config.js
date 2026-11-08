@@ -12,7 +12,12 @@ export default tseslint.config(
     ignores: ["!node_modules/", "node_modules/*"],
   },
   //
-  { languageOptions: { globals: globals.browser } },
+  {
+    languageOptions: {
+      globals: globals.browser,
+      parserOptions: { tsconfigRootDir: import.meta.dirname },
+    },
+  },
   eslint.configs.recommended,
   tseslint.configs.recommended,
 )

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{title}}</title>
+    <!-- {{sync-scripts}} -->
+    <!-- {{styles}} -->
+    <!-- {{scripts}} -->
+    <!-- {{production-only:start}} -->
+    <script>
+      console.log("This script is only in production.")
+    </script>
+    <!-- {{production-only:end}} -->
+    <!-- {{metadata}} -->
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="/missing">Missing</a>
+    </nav>
+    <main><!-- {{content}} --></main>
+  </body>
+</html>

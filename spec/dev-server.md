@@ -9,7 +9,7 @@
 
 - **`dev-server/serve/order`** — A request is answered by the first match: a page (see `page/url/dev-server`), a file in the staging folder, a file in the static folder, or 404 with the text `404 :-/`. A folder is served by its `index.html`.
 - **`dev-server/serve/requests`** — Every HTTP method is answered the same way, and the query string is ignored. Paths aren't percent-decoded, for pages or files: `/a%20b.txt` doesn't find `a b.txt`. A page is sent as `text/html` with its status.
-- **`dev-server/serve/mime`** — Files get a content type from their lowercased extension, with no charset:
+- **`dev-server/serve/mime`** — Files get a content type from their lowercased extension, with no charset (see `encoding/charset`):
 
   | Extension       | Content type       |
   | --------------- | ------------------ |

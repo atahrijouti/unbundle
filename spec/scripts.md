@@ -15,7 +15,7 @@
 ## Sync scripts
 
 - **`scripts/sync/file`** — A layout and a page can each have an optional `sync.ts`. Its code ends up pasted into the page's HTML as a plain `<script>`, not `type="module"`, so it can't use `import` or `export`. Nothing checks for them; they fail in the browser. `import type`, and imports whose names are never used, are removed when transpiled, so those are fine.
-- **`scripts/sync/inline`** — unbundle reads each `sync.ts` from `src/`, transpiles it without bundling, and pastes the code into `<!-- {{sync-scripts}} -->` as `<script>(() => { … })()</script>`, the layout's first. Each one is wrapped in its own function, so the two can use the same names. Being `.ts` files, they're also transpiled into the staging folder like any other (see `staging/transpile`).
+- **`scripts/sync/inline`** — unbundle reads each `sync.ts` from `src/`, transpiles it without bundling, keeping text as written (see `encoding/text/as-written`), and pastes the code into `<!-- {{sync-scripts}} -->` as `<script>(() => { … })()</script>`, the layout's first. Each one is wrapped in its own function, so the two can use the same names. Being `.ts` files, they're also transpiled into the staging folder like any other (see `staging/transpile`).
 
 ## Global script
 

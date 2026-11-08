@@ -1,2 +1,5 @@
+packages:
+  - sample-site
+
 allowBuilds:
   esbuild: true

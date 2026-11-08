@@ -13,6 +13,6 @@
 
 ## Transpiling
 
-- **`staging/transpile`** — Each `.ts` file becomes a `.js` file next to where it was, one to one: types removed, never bundled or minified. Only `.ts` files are transpiled; `.tsx`, `.mts` and `.cts` files are copied as they are. The site's `tsconfig.json` is read as esbuild normally reads it. A `.d.ts` file becomes an empty `.d.js`. All the `.ts` files of one fill or sync are transpiled together (see `errors/staging/transpile`).
+- **`staging/transpile`** — Each `.ts` file becomes a `.js` file next to where it was, one to one: types removed, never bundled or minified, with text kept as written (see `encoding/text/as-written`). Only `.ts` files are transpiled; `.tsx`, `.mts` and `.cts` files are copied as they are. The site's `tsconfig.json` is read as esbuild normally reads it. A `.d.ts` file becomes an empty `.d.js`. All the `.ts` files of one fill or sync are transpiled together (see `errors/staging/transpile`).
 - **`staging/ts-imports`** — In each transpiled file, `.ts` becomes `.js` wherever the text `from "<path>.ts"` (or with single quotes) appears and the path starts with `.`. It's a text replacement over the whole file, so matching text in strings, and in the comments the transpiled file keeps, changes too. Side-effect imports (`import "./x.ts"`), `import()`, and paths with a query (`./x.ts?v=1`) keep `.ts`.
 - **`staging/format`** — Transpiled files are formatted with the site's Prettier config, as found from the file's path in the staging folder; a `parser` set there wins. Copied files aren't formatted.

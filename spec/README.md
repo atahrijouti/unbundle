@@ -2,6 +2,8 @@
 
 What unbundle does today, one topic per file. It is a one-to-one record of the code: when they disagree, one of them has a bug. Planned changes live in [`TODO.md`](../TODO.md). Terms are defined in [`CONTEXT.md`](../CONTEXT.md); history and reasoning live in [`changes/`](../changes/).
 
+unbundle works in UTF-8: it reads and writes text as UTF-8 and writes text outside ASCII as it is, never as escapes (see [Encoding](encoding.md)).
+
 ## How a spec file is written
 
 Each file covers one topic, split into concepts, one `##` heading each. Within a concept, rules follow the order you'd think about it:
@@ -37,5 +39,6 @@ Both commands run from the site's root folder. Every path here is relative to it
 - [Staging folder](staging.md)
 - [Build](build.md)
 - [Dev server](dev-server.md)
+- [Encoding](encoding.md)
 - [Errors](errors.md)
 - [Package](package.md)

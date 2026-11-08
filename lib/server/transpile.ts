@@ -65,6 +65,7 @@ export const transpileTsFiles = async (files: string[]) => {
     write: false,
     bundle: false,
     minify: false,
+    charset: "utf8",
     plugins: [
       {
         name: "append-ready",

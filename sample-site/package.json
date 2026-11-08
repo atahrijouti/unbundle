@@ -1,0 +1,12 @@
+{
+  "name": "sample-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "unbundle-serve",
+    "build": "unbundle-build"
+  },
+  "dependencies": {
+    "unbundle": "workspace:*"
+  }
+}
