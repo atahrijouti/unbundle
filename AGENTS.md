@@ -5,6 +5,7 @@ A static-site tool that doesn't bundle: `unbundle-build` writes the finished sit
 ## Where things are
 
 - `CONTEXT.md`: the terms. Use them.
+- `PRINCIPLES.md`: what unbundle is for, and how to decide on a change.
 - `spec/`: what unbundle does today, rule by rule. `spec/README.md` explains the format.
 - `TODO.md`: the backlog of planned changes, in order. An item that changes existing behavior names the spec rule it changes.
 - `proposals/`: changes written down but not built yet.
