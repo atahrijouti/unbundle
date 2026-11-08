@@ -1,19 +1,16 @@
 # unbundle
 
-Goals for this tool :
+unbundle builds static websites without a bundler, so the code the browser gets is the code you wrote, and anyone who opens View Source can read it.
 
-- The web, imho, was built on **Mouse Right Button Click** > **View Source**, and for the source to actually look like code you can read, and have the oppotunity to learn from it even as a visitor to the website. Let alone being able to easily debug things when you're the one developing it...
-- I do not like bundling.
-- It's 2025.
-- I like my live reload to go brrr.
-- I like for my production builds to end sometimes this year.
-- The current Web APIs have evolved so much I would like to argue that we can do a lot more without a view library for static websites.
-- It's fun not to have to use webpack.
+## Why
 
-👊
+- **View Source should show real code.** The web grew up on right-click → View Source. A visitor should be able to read a site's source and learn from it, and the person building it should be able to debug it, in production too.
+- **Bundling trades clarity for speed.** Today's tools ship fast sites and compile fast, but every layer makes the setup harder to follow and leaves the developer blind when something breaks in production.
+- **The platform is enough.** Web APIs have come far enough that a static site can do a lot without bundling or a complicated setup.
+- **Fast, without the tangle.** Live reload should be instant, builds quick, and sites never laggy. Optimizations can come later, as options.
 
-🎤
+unbundle works with HTML, JavaScript and CSS. Bring any library that runs in the browser; unbundle doesn't favor one.
 
----
+## Status
 
-Currently mixing Bun, ESbuild and a smattering of string replacing in a big html template. Very early stages.
+Early stages. `unbundle-build` writes the finished site, and `unbundle-serve` is the dev server. What you write in the source folder reaches the site as written: transpiled with esbuild where needed, never bundled, and placed into an HTML layout file.

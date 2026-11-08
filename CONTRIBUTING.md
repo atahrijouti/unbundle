@@ -31,7 +31,7 @@ Only one release runs at a time and none is cancelled. A newer push replaces a r
 
 ## Changing unbundle
 
-1. **Propose.** Write the change in `proposals/<name>.md`: why, what changes, which rules in `spec/` and items in `TODO.md` it touches, and any breaking changes. A proposal can wait on `main` until there's time to build it; one that's abandoned is deleted.
+1. **Propose.** Write the change in `proposals/<name>.md`: why, what changes, which rules in `spec/` and items in `TODO.md` it touches, and any breaking changes. Check it against `PRINCIPLES.md`. A proposal can wait on `main` until there's time to build it; one that's abandoned is deleted.
    Nothing is built until the maintainer approves the proposal. When the direction isn't clear yet, as with the items under "To decide" in `TODO.md`, discuss the options with the maintainer first; the proposal then records what was chosen.
 2. **Implement.** In one PR, move the proposal to `changes/` with the next number (`changes/<NNNN>-<name>.md`), change `spec/`, the tests and the code together, update the sample site when the change adds or changes something a site can use, and remove the items it settles from `TODO.md`. Run `pnpm format`, then make sure `pnpm check` passes before opening the PR. Every record in `changes/` is in effect. One that replaces an earlier record says so at its top.
 3. Use the terms in `CONTEXT.md`.
