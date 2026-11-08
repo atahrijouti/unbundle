@@ -1,0 +1,7 @@
+[data-daytime="day"] h1::after {
+  content: ", good day";
+}
+
+[data-daytime="night"] h1::after {
+  content: ", good evening";
+}

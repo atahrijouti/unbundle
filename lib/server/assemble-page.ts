@@ -73,6 +73,7 @@ const compileSyncScript = async (filePath: string) => {
     write: false,
     bundle: false,
     minify: false,
+    charset: "utf8",
   })
 
   return `<script>(() => {\n${result.outputFiles[0]?.text ?? ""}\n})()</script>`

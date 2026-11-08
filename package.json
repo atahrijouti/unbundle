@@ -9,7 +9,9 @@
     "typecheck": "tsc",
     "lint": "eslint",
     "format": "prettier --write .",
-    "check": "prettier --check . && tsc && eslint"
+    "check": "prettier --check . && tsc && tsc -p sample-site && eslint",
+    "sample": "pnpm build && pnpm --filter sample-site dev",
+    "sample:build": "pnpm build && pnpm --filter sample-site build"
   },
   "bin": {
     "unbundle-serve": "./dist/server/index.js",
