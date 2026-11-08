@@ -2,6 +2,27 @@
 
 The backlog, in the order to work through it. Each group above "To decide" is one change: write its proposal, then build it (see `CONTRIBUTING.md`). Items name the spec rule they change.
 
+## Build failures
+
+- **`build/html`** — Don't write pages that fail; skip them and report them (see the TODOs on `errors/page/error-page`).
+- **`errors/page/error-page`** — Only the dev server shows error pages. The build doesn't write pages that fail: it skips them, builds the rest, reports on the command line each failed page and why, then exits non-zero.
+- **`errors/page/unchecked`** — In the build, every error while producing a page is reported on the command line, and no HTML is written for that page.
+- **`errors/build/exit`** — Exit non-zero on any error.
+- **`errors/static`** — Don't fail when the static folder doesn't exist. A site with no static files, or one that keeps an empty `public/` out of git, should still build.
+
+## Sample site in CI
+
+- Run `pnpm sample:build` in the PR workflow, after `pnpm check`. Depends on "Build failures" above: until then a failing page is written as an error page or stops the build, and the build still exits 0, so the step would only catch errors while filling the staging folder or loading the config.
+
+## Dev server errors
+
+- **`errors/dev-server/crash`** — Catch errors while answering a request and return a 500 page instead of stopping.
+- **`errors/page/unchecked`** — In the dev server, every error while producing a page becomes a 500 error page, and the dev server keeps running.
+- **`errors/page/checks`** — A missing `content` export is 500, like the other checks.
+- **`errors/page/error-page`** — Live reload only in development. Escape the message.
+- **`errors/staging/sync`** — Don't reload after a failed sync.
+- **`errors/staging/dev-server`** — Show errors from filling the staging folder in the browser too, on the page being viewed, not only in the log.
+
 ## Tests from the spec
 
 - Write tests from the spec. Explore how thoroughly first. Things known so far:
@@ -9,22 +30,6 @@ The backlog, in the order to work through it. Each group above "To decide" is on
   - The dev server logs nothing when a sync finishes or a reload is sent; syncs wait 50 ms and reloads 750 ms (`staging/dev-server`, `dev-server/reload/trigger`).
   - Every rule was checked on Windows only. Symlinks and path separators may behave differently elsewhere.
   - A few rules need a real browser or a second device (`dev-server/reload/reconnect`, `dev-server/reload/host`).
-
-## Build failures
-
-- **`build/html`** — Don't write pages that fail; skip them and report them (see the TODOs on `errors/page/error-page`).
-- **`errors/page/error-page`** — Only the dev server shows error pages. The build doesn't write pages that fail: it skips them, builds the rest, reports on the command line each failed page and why, then exits non-zero.
-- **`errors/build/exit`** — Exit non-zero on any error.
-- **`errors/static`** — Don't fail when the static folder doesn't exist. A site with no static files, or one that keeps an empty `public/` out of git, should still build.
-
-## Dev server errors
-
-- **`errors/dev-server/crash`** — Catch errors while answering a request and return a 500 page instead of stopping.
-- **`errors/page/unchecked`** — In the dev server, every error while producing a page becomes a 500 error page, and the dev server keeps running. In the build, it's reported on the command line, and no HTML is written for that page.
-- **`errors/page/checks`** — A missing `content` export is 500, like the other checks.
-- **`errors/page/error-page`** — Live reload only in development. Escape the message.
-- **`errors/staging/sync`** — Don't reload after a failed sync.
-- **`errors/staging/dev-server`** — Show errors from filling the staging folder in the browser too, on the page being viewed, not only in the log.
 
 ## Placeholder filling
 
