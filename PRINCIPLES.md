@@ -7,9 +7,14 @@ What unbundle is for, and how to decide on a change. Every proposal is checked a
 What the author writes reaches the site as written. Names, words and code stay as they are; nothing is compressed or mangled by default.
 
 - Stripping types, so `.ts` becomes `.js`, is fine.
-- Reformatting is welcome: it can make the site easier to read than the source. It may become optional.
 - Small, visible additions that help the page work are fine, such as the `ready` listener appended to a page's module. It marks where the page's dynamic part starts, and it stays visible in the module rather than in an inline script in the HTML.
-- Line numbers don't have to match the source.
+
+## Not a concern
+
+What can differ from the source without hurting readable output:
+
+- **Formatting.** A page is assembled from several pieces, and formatting it makes them read as one document with consistent indentation. It may become optional.
+- **Line numbers.** The layout file is a shell that brings in other files at its placeholders, so a page's lines don't map back to its source files.
 
 ## No bundling
 
